@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Activity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#12233D;
+    --navy-2:#1B3A5C;
+    --gold:#C89B3C;
+    --gold-light:#E9C876;
+    --bg:#F4F5F8;
+    --surface:#FFFFFF;
+    --line:#E3E6ED;
+    --text:#1B2430;
+    --text-dim:#6B7382;
+    --green:#2F8F5B;
+    --red:#C0392B;
+    --amber:#B8791E;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+  h1,h2,h3,.brand{font-family:'Outfit',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select{font-family:inherit;}
+
+  /* ---------- Login ---------- */
+  #loginScreen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(200,155,60,0.18), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(27,58,92,0.35), transparent 45%),
+      var(--navy);
+  }
+  .login-card{
+    width:380px;max-width:90vw;background:var(--surface);border-radius:16px;
+    padding:36px 32px;box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  }
+  .login-mark{
+    width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--amber));
+    display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800;font-size:22px;
+    margin-bottom:18px;font-family:'Outfit',sans-serif;
+  }
+  .login-card h1{font-size:22px;margin:0 0 2px;color:var(--navy);}
+  .login-card .sub{color:var(--text-dim);font-size:13px;margin-bottom:24px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
+  .field input, .field select{
+    width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;background:#FBFBFD;
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--gold);background:#fff;}
+  .btn-primary{
+    width:100%;padding:11px;border:none;border-radius:8px;background:var(--navy);color:#fff;
+    font-weight:700;font-size:14.5px;margin-top:6px;transition:background .15s;
+  }
+  .btn-primary:hover{background:var(--navy-2);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{background:var(--gold-light);}
+  .login-error{color:var(--red);font-size:12.5px;margin-top:10px;min-height:14px;}
+  .login-toggle{text-align:center;margin-top:16px;font-size:12.5px;color:var(--text-dim);}
+  .login-toggle a{color:var(--navy-2);font-weight:600;cursor:pointer;text-decoration:none;}
+  .pw-wrap{position:relative;}
+  .pw-wrap input{padding-right:38px;}
+  .pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:15px;user-select:none;opacity:.65;}
+  .pw-eye:hover{opacity:1;}
+  #activateScreen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(200,155,60,0.18), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(27,58,92,0.35), transparent 45%),
+      var(--navy);
+  }
+  .staff-pw-cell{display:flex;align-items:center;gap:8px;}
+  .staff-pw-cell .pw-eye{position:static;transform:none;}
+
+  /* ---------- App shell ---------- */
+  #appScreen{display:none;min-height:100vh;}
+  .shell{display:flex;min-height:100vh;}
+  .sidebar{
+    width:222px;background:var(--navy);color:#DCE3EE;flex-shrink:0;
+    display:flex;flex-direction:column;padding:20px 0;
+  }
+  .sidebar .brand{display:flex;align-items:center;gap:10px;padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:14px;}
+  .sidebar .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--amber));display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800;font-size:15px;}
+  .sidebar .brand .txt{font-weight:700;font-size:15px;color:#fff;line-height:1.15;}
+  .sidebar .brand .txt span{display:block;font-size:10.5px;font-weight:500;color:var(--gold-light);letter-spacing:.5px;}
+  .nav-item{
+    padding:11px 20px;font-size:13.5px;font-weight:500;color:#B7C0D1;cursor:pointer;
+    border-left:3px solid transparent;display:flex;align-items:center;gap:10px;
+  }
+  .nav-item:hover{background:rgba(255,255,255,0.05);color:#fff;}
+  .nav-item.active{background:rgba(200,155,60,0.14);border-left-color:var(--gold);color:#fff;}
+  .nav-section-label{padding:14px 20px 6px;font-size:10.5px;letter-spacing:.8px;color:#6E7A90;font-weight:700;text-transform:uppercase;}
+  .sidebar-footer{margin-top:auto;padding:14px 20px 0;border-top:1px solid rgba(255,255,255,0.08);}
+  .who{font-size:12.5px;color:#fff;font-weight:600;}
+  .who-role{font-size:11px;color:var(--gold-light);margin-bottom:8px;}
+  .logout-btn{width:100%;padding:8px;border:1px solid rgba(255,255,255,0.18);background:transparent;color:#DCE3EE;border-radius:7px;font-size:12.5px;}
+  .logout-btn:hover{background:rgba(255,255,255,0.08);}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{
+    height:60px;background:var(--surface);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;padding:0 26px;flex-shrink:0;
+  }
+  .topbar h2{font-size:17px;margin:0;color:var(--navy);}
+  .topbar .crumb{font-size:12px;color:var(--text-dim);}
+  .content{padding:26px;overflow-y:auto;flex:1;}
+
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
+  .stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+  .stat-card .label{font-size:11.5px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .stat-card .val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--navy);margin-top:6px;}
+  .stat-card.accent .val{color:var(--amber);}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:20px;}
+  .panel-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:between;justify-content:space-between;}
+  .panel-head h3{margin:0;font-size:15px;color:var(--navy);}
+  .panel-body{padding:20px;}
+
+  .btn-sm{padding:8px 14px;border:none;border-radius:7px;font-size:12.5px;font-weight:700;background:var(--navy);color:#fff;}
+  .btn-sm:hover{background:var(--navy-2);}
+  .btn-sm.gold{background:var(--gold);color:var(--navy);}
+  .btn-outline{padding:7px 12px;border:1.5px solid var(--line);border-radius:7px;font-size:12px;font-weight:600;background:#fff;color:var(--text);}
+  .btn-outline:hover{border-color:var(--navy);}
+  .btn-danger-outline{padding:6px 10px;border:1.5px solid #F0D1CC;border-radius:7px;font-size:11.5px;font-weight:600;background:#FDF3F1;color:var(--red);}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;padding:9px 10px;background:#F7F8FA;color:var(--text-dim);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--line);}
+  td{padding:10px;border-bottom:1px solid var(--line);}
+  tr:last-child td{border-bottom:none;}
+  .empty-row td{text-align:center;color:var(--text-dim);padding:26px;font-size:13px;}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid .full{grid-column:1/-1;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .badge.head{background:#E9E1FA;color:#5B3AA6;}
+  .badge.area{background:#DDEFE4;color:var(--green);}
+  .badge.branch{background:#FCE9D4;color:var(--amber);}
+  .toast{
+    position:fixed;bottom:22px;right:22px;background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;
+    font-size:13px;box-shadow:0 10px 26px rgba(0,0,0,0.25);z-index:999;display:none;
+  }
+  .toast.err{background:var(--red);}
+  .modal-bg{
+    display:none;position:fixed;inset:0;background:rgba(18,35,61,0.55);z-index:500;
+    align-items:center;justify-content:center;
+  }
+  .modal{background:#fff;border-radius:14px;width:460px;max-width:92vw;max-height:88vh;overflow-y:auto;padding:24px;}
+  .modal h3{margin:0 0 16px;color:var(--navy);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+  .helper{font-size:11.5px;color:var(--text-dim);margin-top:4px;}
+  .setup-banner{background:#FDF3E3;border:1px solid #F0DDA8;color:var(--amber);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:16px;}
+  ::-webkit-scrollbar{width:9px;height:9px;}
+  ::-webkit-scrollbar-thumb{background:#CBD2DE;border-radius:10px;}
+  @media (max-width:800px){
+    .sidebar{position:fixed;left:-222px;top:0;bottom:0;z-index:400;transition:left .2s;}
+    .sidebar.open{left:0;}
+    .form-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-mark">SF</div>
+    <h1>Daily Activity</h1>
+    <div class="sub" id="loginSub">Apne office ke account se login karein</div>
+
+    <div id="loginBox">
+      <div class="field">
+        <label>Email</label>
+        <input type="text" id="loginEmail" class="no-upper" placeholder="you@company.in">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap"><input type="password" id="loginPassword" placeholder="••••••••"><span class="pw-eye" onclick="togglePw('loginPassword', this)">👁</span></div>
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Login</button>
+      <div class="login-error" id="loginError"></div>
+    </div>
+
+    <div class="login-toggle">
+      Pehli baar setup kar rahe hain? <a onclick="toggleSetup()">Head Office Admin banayein</a>
+    </div>
+
+    <div id="setupBox" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px;">
+      <div class="setup-banner">Ye option sirf tab kaam karega jab system me abhi tak koi Head Office admin na ho.</div>
+      <div class="field"><label>Aapka Naam</label><input id="setupName" placeholder="Naam"></div>
+      <div class="field"><label>Email</label><input id="setupEmail" class="no-upper" placeholder="admin@company.in"></div>
+      <div class="field"><label>Password</label>
+        <div class="pw-wrap"><input type="password" id="setupPassword" placeholder="Kam se kam 6 characters"><span class="pw-eye" onclick="togglePw('setupPassword', this)">👁</span></div>
+      </div>
+      <button class="btn-primary btn-gold" onclick="doFirstAdminSetup()">Head Office Admin Banayein</button>
+      <div class="login-error" id="setupError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STAFF ACTIVATION (opened via link Head Office shares) ================= -->
+<div id="activateScreen" style="display:none;">
+  <div class="login-card" style="width:400px;">
+    <div class="login-mark">SF</div>
+    <h1>Apna Password Set Karein</h1>
+    <div class="sub">Ye sirf ek baar karna hai. Neeche apni details check kar lein aur password banayein.</div>
+    <div id="activateLoading" style="font-size:13px;color:var(--text-dim);">Load ho raha hai...</div>
+    <div id="activateBox" style="display:none;">
+      <div class="field"><label>Naam</label><input id="act_name" disabled></div>
+      <div class="field"><label>User ID / Email</label><input id="act_userid" disabled></div>
+      <div class="field"><label>Role</label><input id="act_role" disabled></div>
+      <div class="field"><label>Naya Password (kam se kam 6 characters)</label>
+        <div class="pw-wrap"><input type="password" id="act_password"><span class="pw-eye" onclick="togglePw('act_password', this)">👁</span></div>
+      </div>
+      <div class="field"><label>Password Confirm Karein</label>
+        <div class="pw-wrap"><input type="password" id="act_password2"><span class="pw-eye" onclick="togglePw('act_password2', this)">👁</span></div>
+      </div>
+      <button class="btn-primary btn-gold" onclick="submitActivation()">Password Save Karein &amp; Account Banayein</button>
+      <div class="login-error" id="activateError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="appScreen">
+  <div class="shell">
+    <div class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="mark">SF</div>
+        <div class="txt">Daily Activity<span id="roleTag">Head Office</span></div>
+      </div>
+      <div id="navItems"></div>
+      <div class="sidebar-footer">
+        <div class="who" id="whoName">—</div>
+        <div class="who-role" id="whoRole">—</div>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="crumb" id="pageCrumb"></div>
+      </div>
+      <div class="content" id="content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBody"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* =========================================================================
+   DAILY ACTIVITY — Phase 1 (v3)
+   Login/Role system + Head Office (Area Office, Branch, Staff)
+   + Branch (Group, Loan Create/Disbursed Loan, Loan Closer, Collection)
+   Backend: Firebase Auth + Firestore (Spark/free plan)
+
+   v4 changes:
+   - Branch/Area/Head Office Dashboard par ab 5 core stats (Total Borrower, Total
+     Outstanding, Today Realizable, Today Collection, Today Loan) dikhte hain —
+     Area apni Branches ko link karke, Head Office sabhi Branch/Area ko link
+     karke, wahi stats drill-down "View Dashboard" se dekh sakta hai.
+   - Collection (Realizable/Advance/Overdue) ab seedha loans/collections me
+     likhne ke bajaye ek hi roz-ka "dailyStaging" document me Save hota hai
+     (jitni baar chaho Save karo, sirf 1 document update hota hai — Spark plan
+     ke daily limit ko bachata hai). Har borrower row me tick box hai: tick ON
+     rehne par Put Amt = Emi Amt (fix), tick hatane par Put Amt kam likh sakte
+     hain (zyada nahi). Realizable = aaj ke din ka group dropdown, Advance =
+     pehle Day fir uss din ka Group dropdown, Overdue = seedha Group dropdown.
+   - Naya "E.O.D" section: din bhar me jo bhi Save hua, uska total yahan dikhta
+     hai; "E.O.D Submit Karein" dabate hi wahi data loans (outstanding minus)
+     aur collections (history) me final ho kar likha jata hai.
+   - "Not Submit": Head Office (globally ya kisi ek Area ki dashboard se) aur
+     Area Head (apne area ke liye) dekh sakte hain ki aaj kis branch ka E.O.D
+     submit nahi hua aur kaunse group ka collection abhi tak Save nahi hua.
+     Head Office yahi se us branch ki taraf se E.O.D submit bhi kar sakta hai.
+   - Head Office Staff Management me har active staff ke aage "Branch Badlein"
+     button hai — click karte hi staff turant naye Branch/Area ka data dekh
+     payega, dobara activation ki zaroorat nahi.
+
+   v3 changes:
+   - Staff activation ab genuine email-verified hai. Head Office staff ka Naam +
+     Email + Role + Area/Branch save karta hai, aur Firebase khud us email par
+     ek sign-in link bhejta hai. Sirf jiske paas us email ka inbox access hai,
+     wahi wo link khol kar apna password set kar sakta hai aur is project me
+     kaam kar sakta hai — chahe main app ka link (jaise GitHub Pages URL) kisi
+     ko bhi mil jaye, uss se koi access nahi milta jab tak Head Office khud us
+     insaan ki email par activation na bheje.
+   - Existing/purane staff ek Excel list (Naam | Ph No | Mail ID) se bulk upload
+     ho sakte hain "Staff Directory" me — waha se Head Office unhe ek-ek karke
+     Branch/Area se "Link" karta hai, jo turant unhe activation email bhej deta hai.
+
+   v2 changes:
+   - Loan Criteria (Head Office wide interest/file charge/EMI) hata diya gaya hai.
+     Ab Branch Staff khud Interest Rate, File Charge, EMI No har loan ke waqt
+     "Loan Create / Disbursed Loan" form me daalta hai — Emi Amt automatic show hota hai.
+   - Branch me alag se "Customer" concept hata diya gaya hai. Uske jagah "Loan Create /
+     Disbursed Loan" par click karte hi seedha borrower + loan form khulta hai
+     (Collection Day, Group, borrower details, loan details — sab ek saath), submit
+     karte hi seedhe database (loans collection) me save ho jata hai, aur disb date
+     ke agle din se collection criteria me aa jata hai.
+
+   SETUP STEPS (do this before using):
+   1. Go to https://console.firebase.google.com -> Create Project (free Spark plan is fine)
+   2. Build > Authentication > Get Started > Sign-in method > enable "Email/Password"
+      -> isi provider ke andar "Email link (passwordless sign-in)" ko bhi ON karein
+      (ye zaroori hai, warna Staff Activation email nahi bhej payega).
+   3. Build > Authentication > Settings > Authorized domains -> apna hosting domain
+      add karein (jaise your-username.github.io) — warna Firebase activation email
+      ka link "unauthorized domain" error dega.
+   4. Build > Firestore Database > Create database (start in production mode)
+   5. Project settings (gear icon) > General > "Your apps" > Add app > Web (</>) 
+      -> copy the firebaseConfig object and paste it below, replacing the placeholder.
+   6. Firestore > Rules tab, paste the rules from FIRESTORE_RULES.txt (provided alongside
+      this file) and Publish.
+   7. Open this index.html in a browser (or host it on GitHub Pages), click
+      "Head Office Admin banayein" and create your first admin account.
+   ========================================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAsjMZVP9XmatbLM-kImw7VtH1afaiTyhM",
+  authDomain: "sampoorn-finance.firebaseapp.com",
+  projectId: "sampoorn-finance",
+  storageBucket: "sampoorn-finance.firebasestorage.app",
+  messagingSenderId: "40359742516",
+  appId: "1:40359742516:web:92dae742167ba2c5fece61"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let CURRENT_USER = null;   // { uid, name, email, role, areaId, branchId }
+let CURRENT_TAB = null;
+
+// ---------------- Loan terms (ab Head Office wide criteria nahi hai — Branch Staff Loan Create
+// form me hi Interest Rate, File Charge, EMI No khud daalta hai, har loan ke liye alag) ----------------
+// total payable = principal * (1 + flat%), EMI = that total split evenly across all installments
+// (rounded to nearest ₹10), aur last installment me jo balance bache wo adjust ho jata hai.
+function calcLoanTerms(loanAmt, interestPct, fileChargePct, tenureWeeks){
+  const interest = Math.round(loanAmt * interestPct / 100);
+  const totalPayable = loanAmt + interest;
+  const emiAmt = Math.ceil((totalPayable / tenureWeeks) / 10) * 10; // round up to nearest ₹10
+  const lastEmiAmt = totalPayable - (emiAmt * (tenureWeeks - 1));   // last installment absorbs the remainder
+  const fileCharge = Math.round(loanAmt * fileChargePct / 100);
+  return { interest, totalPayable, emiAmt, lastEmiAmt, fileCharge, tenureWeeks, interestPct, fileChargePct };
+}
+function calcAge(dobStr, refDateStr){
+  if(!dobStr) return null;
+  const dob = new Date(dobStr), ref = new Date(refDateStr || todayStr());
+  let age = ref.getFullYear() - dob.getFullYear();
+  const m = ref.getMonth() - dob.getMonth();
+  if(m < 0 || (m === 0 && ref.getDate() < dob.getDate())) age--;
+  return age;
+}
+function togglePw(inputId, iconEl){
+  const inp = document.getElementById(inputId);
+  if(inp.type === 'password'){ inp.type = 'text'; iconEl.textContent = '🙈'; }
+  else{ inp.type = 'password'; iconEl.textContent = '👁'; }
+}
+// ---------------- Auto-uppercase every text field, sirf Login (email/userid + password) chodkar ----------------
+// Login/setup email aur sabhi password fields "no-upper" class se exempt hain.
+document.addEventListener('input', function(e){
+  const el = e.target;
+  if(el.tagName === 'INPUT' && el.type === 'text' && !el.classList.contains('no-upper')){
+    const pos = el.selectionStart, posEnd = el.selectionEnd;
+    const upper = el.value.toUpperCase();
+    if(upper !== el.value){
+      el.value = upper;
+      if(pos != null) el.setSelectionRange(pos, posEnd);
+    }
+  }
+}, true);
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function monthStartStr(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-01';
+}
+function todayDayName(){
+  const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return names[new Date().getDay()];
+}
+function fmtAmt(n){ return (n||0).toLocaleString('en-IN'); }
+const ALL_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function dayNameForDate(dateStr){
+  if(!dateStr) return todayDayName();
+  const parts = dateStr.split('-').map(Number);
+  const d = new Date(parts[0], parts[1]-1, parts[2]);
+  return ALL_DAYS[d.getDay()];
+}
+
+/* =========================================================================
+   DAILY STAGING (Local SQL jaisa system) — Spark plan ke daily read/write
+   limit ko bachane ke liye, Realizable/Advance/Overdue me "Save" karne par
+   har borrower ka alag Firestore document nahi banta. Poore din ka collection
+   data ek hi document (dailyStaging/{branchId}_{date}) me jama hota hai —
+   chahe branch staff din bhar me kitni hi baar Save kare, wo sirf usi ek
+   document ko update karta hai. Sirf E.O.D Submit karne par ye staged data
+   ek saath (batch me) loans/collections me final ho kar likha jata hai.
+   Isi document ki wajah se Head Office/Area bhi (bina branch ke device par
+   gaye) dekh sakte hain ki aaj kis group ka collection abhi tak save nahi
+   hua, aur zaroorat padne par Head Office khud us branch ka E.O.D submit
+   kar sakta hai.
+   ========================================================================= */
+function stagingId(branchId, date){ return branchId + '_' + date; }
+async function loadStagingDoc(branchId, date){
+  const snap = await db.collection('dailyStaging').doc(stagingId(branchId,date)).get();
+  if(!snap.exists) return { branchId, date, entries:{}, savedGroups:{realizable:[],advance:[],overdue:[]}, submitted:false };
+  const d = snap.data();
+  d.entries = d.entries || {};
+  d.savedGroups = d.savedGroups || {realizable:[],advance:[],overdue:[]};
+  d.savedGroups.realizable = d.savedGroups.realizable || [];
+  d.savedGroups.advance = d.savedGroups.advance || [];
+  d.savedGroups.overdue = d.savedGroups.overdue || [];
+  return d;
+}
+// rows: [{loanId, groupId, emiAmt, putAmt, customerName}]
+async function saveStagingRows(branchId, date, type, groupId, rows){
+  const ref = db.collection('dailyStaging').doc(stagingId(branchId, date));
+  const update = { branchId, date, day: dayNameForDate(date), updatedAt: Date.now(), updatedBy: CURRENT_USER.name, submitted: false };
+  rows.forEach(r=>{
+    update['entries.' + r.loanId] = { groupId: r.groupId, type, emiAmt: r.emiAmt||0, putAmt: r.putAmt||0, customerName: r.customerName||'' };
+  });
+  if(groupId){
+    update['savedGroups.' + type] = firebase.firestore.FieldValue.arrayUnion(groupId);
+  }
+  await ref.set(update, { merge: true });
+}
+function stagingTotals(staging){
+  let realizable=0, advance=0, overdue=0;
+  Object.values(staging.entries||{}).forEach(e=>{
+    if(e.type==='realizable') realizable += (e.putAmt||0);
+    else if(e.type==='advance') advance += (e.putAmt||0);
+    else if(e.type==='overdue') overdue += (e.putAmt||0);
+  });
+  return { realizable, advance, overdue, total: realizable+advance+overdue };
+}
+async function loadEodDoc(branchId, date){
+  const snap = await db.collection('eod').doc(stagingId(branchId,date)).get();
+  return snap.exists ? snap.data() : null;
+}
+// Branch khud E.O.D submit kare, ya Head Office kisi branch ki taraf se submit kare (bhool jaane par).
+async function finalizeEod(branchId, date, submittedByLabel){
+  const staging = await loadStagingDoc(branchId, date);
+  const entries = Object.entries(staging.entries||{});
+  const toCommit = entries.filter(([loanId, e]) => (e.putAmt||0) > 0);
+  const batch = db.batch();
+  for(const [loanId, e] of toCommit){
+    const loanRef = db.collection('loans').doc(loanId);
+    const loanDoc = await loanRef.get();
+    if(!loanDoc.exists) continue;
+    const d = loanDoc.data();
+    const newOutstanding = Math.max(0, (d.outstanding||0) - (e.putAmt||0));
+    batch.update(loanRef, {
+      outstanding: newOutstanding,
+      status: newOutstanding <= 0 ? 'closed' : 'active',
+      emisPaid: (d.emisPaid||0) + 1
+    });
+    const collRef = db.collection('collections').doc();
+    batch.set(collRef, {
+      loanId, groupId: e.groupId||null, branchId,
+      date, type: e.type, emiAmt: e.emiAmt||0, putAmt: e.putAmt||0, createdAt: Date.now()
+    });
+  }
+  const totals = stagingTotals(staging);
+  batch.set(db.collection('eod').doc(stagingId(branchId,date)), {
+    branchId, date, submittedAt: Date.now(), submittedBy: submittedByLabel || CURRENT_USER.name,
+    totals, entryCount: toCommit.length
+  });
+  batch.set(db.collection('dailyStaging').doc(stagingId(branchId,date)), { submitted: true }, { merge: true });
+  await batch.commit();
+  return totals;
+}
+
+// ---------------- helpers ----------------
+function toast(msg, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isErr ? ' err' : '');
+  t.style.display = 'block';
+  setTimeout(()=> t.style.display='none', 3200);
+}
+function openModal(html){
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalBg').style.display = 'flex';
+}
+function closeModal(){ document.getElementById('modalBg').style.display = 'none'; }
+function esc(s){ return (s===undefined||s===null) ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function genId(){ return db.collection('_').doc().id; }
+
+// ---------------- toggle setup box ----------------
+function toggleSetup(){
+  const s = document.getElementById('setupBox');
+  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+}
+
+// ---------------- FIRST ADMIN SETUP ----------------
+async function doFirstAdminSetup(){
+  const name = document.getElementById('setupName').value.trim();
+  const email = document.getElementById('setupEmail').value.trim();
+  const pass = document.getElementById('setupPassword').value;
+  const errBox = document.getElementById('setupError');
+  errBox.textContent = '';
+  if(!name || !email || !pass){ errBox.textContent = 'Sabhi fields bharein'; return; }
+  try{
+    const setupSnap = await db.collection('system').doc('setup').get();
+    if(setupSnap.exists && setupSnap.data().headOfficeCreated){
+      errBox.textContent = 'Head Office admin pehle se ban chuka hai. Kripya login karein.';
+      return;
+    }
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await db.collection('users').doc(cred.user.uid).set({
+      name, email, role:'headoffice', areaId:null, branchId:null, createdAt: Date.now()
+    });
+    await db.collection('system').doc('setup').set({ headOfficeCreated: true });
+    toast('Head Office admin ban gaya! Ab login karein.');
+    await auth.signOut();
+    toggleSetup();
+  }catch(e){
+    errBox.textContent = e.message;
+  }
+}
+
+// ---------------- LOGIN ----------------
+const STAFF_EMAIL_DOMAIN = 'sampoornstaff.local'; // legacy synthetic domain, sirf purane userid-based accounts ke liye (backward compatibility)
+function toLoginEmail(v){
+  return v.includes('@') ? v : (v.toLowerCase() + '@' + STAFF_EMAIL_DOMAIN);
+}
+async function doLogin(){
+  const raw = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const errBox = document.getElementById('loginError');
+  errBox.textContent = '';
+  if(!raw || !pass){ errBox.textContent = 'Email aur password dalein'; return; }
+  try{
+    await auth.signInWithEmailAndPassword(toLoginEmail(raw), pass);
+  }catch(e){
+    errBox.textContent = 'Login fail: ' + e.message;
+  }
+}
+function doLogout(){ auth.signOut(); }
+
+// ---------------- STAFF ACTIVATION ----------------
+// Head Office sirf ek staff ko Role + Branch/Area se "link" karta hai (naam + real email ke saath).
+// Uske baad system us email par Firebase ke through ek genuine sign-in link bhejta hai — koi bhi
+// "?activate=" URL guess/forward karke activation nahi kar sakta, kyunki sirf wahi link kaam
+// karega jo us email ke inbox se click kiya gaya ho (Firebase khud isko verify karta hai).
+// Isliye chahe GitHub/hosting ka main link kisi ko bhi mil jaye, sirf jis staff ke mail id par
+// activation email bheja gaya hai, sirf wahi apna account activate/use kar payega.
+function actionCodeSettingsFor(pendingId){
+  return { url: activationLink(pendingId), handleCodeInApp: true };
+}
+async function sendActivationEmail(pendingId, email){
+  try{
+    await auth.sendSignInLinkToEmail(email, actionCodeSettingsFor(pendingId));
+    toast('Activation email bhej diya gaya: ' + email);
+  }catch(e){ toast(e.message, true); }
+}
+const ACTIVATE_PENDING_ID = new URLSearchParams(location.search).get('activate');
+async function initActivationScreen(){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('activateScreen').style.display = 'flex';
+  const errBox = document.getElementById('activateError');
+  const loadingBox = document.getElementById('activateLoading');
+  if(!auth.isSignInWithEmailLink(window.location.href)){
+    loadingBox.textContent = '';
+    errBox.textContent = 'Ye page sirf us email me bheje gaye activation link se hi khulta hai. Kripya apni email check karke wahi link open karein — ye link kisi aur ke browser me copy-paste karke nahi khulta.';
+    return;
+  }
+  try{
+    const snap = await db.collection('pendingStaff').doc(ACTIVATE_PENDING_ID).get();
+    if(!snap.exists){ loadingBox.textContent = ''; errBox.textContent = 'Ye activation link ab valid nahi hai.'; return; }
+    const d = snap.data();
+    if(d.activated){
+      loadingBox.textContent = 'Ye account already activate ho chuka hai. Kripya normal login karein.';
+      return;
+    }
+    if(!d.email){ loadingBox.textContent = ''; errBox.textContent = 'Is staff record me email nahi hai — Head Office se dubara link karwayein.'; return; }
+    // Email link genuine hai (Firebase ne verify kiya) — ab isi email se sign-in complete karte hain.
+    await auth.signInWithEmailLink(d.email, window.location.href);
+    window._activateData = d;
+    document.getElementById('act_name').value = d.name;
+    document.getElementById('act_userid').value = d.email;
+    document.getElementById('act_role').value = d.role === 'area' ? 'Area Head' : 'Branch Staff';
+    loadingBox.style.display = 'none';
+    document.getElementById('activateBox').style.display = 'block';
+  }catch(e){
+    loadingBox.textContent = '';
+    errBox.textContent = e.message;
+  }
+}
+async function submitActivation(){
+  const errBox = document.getElementById('activateError');
+  errBox.textContent = '';
+  const pass = document.getElementById('act_password').value;
+  const pass2 = document.getElementById('act_password2').value;
+  if(!pass || pass.length < 6){ errBox.textContent = 'Password kam se kam 6 characters ka hona chahiye'; return; }
+  if(pass !== pass2){ errBox.textContent = 'Dono password match nahi kar rahe'; return; }
+  const d = window._activateData;
+  const user = auth.currentUser;
+  if(!user){ errBox.textContent = 'Session expire ho gaya, activation link dubara khol kar try karein.'; return; }
+  try{
+    await user.updatePassword(pass); // ab email-link ke bajaye normal email+password se bhi login ho sakega
+    const batch = db.batch();
+    batch.set(db.collection('users').doc(user.uid), {
+      name: d.name, email: d.email, role: d.role, areaId: d.areaId||null, branchId: d.branchId||null,
+      password: pass, pendingId: ACTIVATE_PENDING_ID, createdAt: Date.now()
+    });
+    batch.update(db.collection('pendingStaff').doc(ACTIVATE_PENDING_ID), { activated: true, activatedUid: user.uid });
+    await batch.commit();
+    toast('Account ban gaya! Ab aap login kar sakte hain.');
+    await auth.signOut();
+    setTimeout(()=>{ location.href = location.pathname; }, 900); // strip ?activate= and go to plain login
+  }catch(e){
+    errBox.textContent = e.message;
+  }
+}
+
+auth.onAuthStateChanged(async (user)=>{
+  if(ACTIVATE_PENDING_ID){
+    if(!user) { initActivationScreen(); return; }
+    // signed in while an activation link is open (shouldn't normally happen) — just sign out and show activation
+    await auth.signOut();
+    return;
+  }
+  if(!user){
+    CURRENT_USER = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('activateScreen').style.display = 'none';
+    return;
+  }
+  const snap = await db.collection('users').doc(user.uid).get();
+  if(!snap.exists){
+    toast('User profile Firestore me nahi mila. Admin se sampark karein.', true);
+    auth.signOut();
+    return;
+  }
+  CURRENT_USER = Object.assign({uid:user.uid}, snap.data());
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  buildSidebar();
+  const firstTab = CURRENT_USER.role === 'headoffice' ? 'ho-dashboard'
+                 : CURRENT_USER.role === 'area' ? 'area-dashboard'
+                 : 'branch-dashboard';
+  showTab(firstTab);
+});
+
+// ---------------- SIDEBAR ----------------
+function buildSidebar(){
+  document.getElementById('whoName').textContent = CURRENT_USER.name;
+  const roleLabels = {headoffice:'Head Office Admin', area:'Area Head', branch:'Branch Staff'};
+  document.getElementById('whoRole').textContent = roleLabels[CURRENT_USER.role];
+  document.getElementById('roleTag').textContent = roleLabels[CURRENT_USER.role];
+
+  let items = '';
+  if(CURRENT_USER.role === 'headoffice'){
+    items += navItem('ho-dashboard','Dashboard');
+    items += navItem('ho-notsubmit','Not Submit');
+    items += sectionLabel('Setup');
+    items += navItem('ho-area','Area Office');
+    items += navItem('ho-branch','Branch');
+    items += navItem('ho-staff','Staff Management');
+    items += navItem('ho-import','Data Import');
+  } else if(CURRENT_USER.role === 'area'){
+    items += navItem('area-dashboard','Dashboard');
+    items += navItem('area-notsubmit','Not Submit');
+    items += sectionLabel('Aapka Area');
+    items += navItem('area-branches','Linked Branches');
+  } else {
+    items += navItem('branch-dashboard','Dashboard');
+    items += sectionLabel('Kaam');
+    items += navItem('branch-group','Group');
+    items += navItem('branch-collection','Collection');
+    items += navItem('branch-eod','E.O.D');
+    items += navItem('branch-loan','Loan Create / Disbursed Loan');
+    items += sectionLabel('Aage Jald Hi');
+    items += navItem('branch-soon-txn','Transaction');
+    items += navItem('branch-soon-reports','Reports');
+  }
+  document.getElementById('navItems').innerHTML = items;
+}
+function navItem(id,label){
+  return `<div class="nav-item" id="nav-${id}" onclick="showTab('${id}')">${label}</div>`;
+}
+function sectionLabel(t){ return `<div class="nav-section-label">${t}</div>`; }
+
+function setActiveNav(id){
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const el = document.getElementById('nav-'+id);
+  if(el) el.classList.add('active');
+}
+
+// ---------------- ROUTER ----------------
+function showTab(id){
+  CURRENT_TAB = id;
+  setActiveNav(id);
+  const titles = {
+    'ho-dashboard':['Dashboard','Head Office'],
+    'ho-notsubmit':['Not Submit','Head Office'],
+    'ho-area':['Area Office','Head Office / Setup'],
+    'ho-branch':['Branch','Head Office / Setup'],
+    'ho-staff':['Staff Management','Head Office / Setup'],
+    'ho-import':['Data Import','Head Office / Setup'],
+    'area-dashboard':['Dashboard','Area Office'],
+    'area-notsubmit':['Not Submit','Area Office'],
+    'area-branches':['Linked Branches','Area Office'],
+    'branch-dashboard':['Dashboard','Branch'],
+    'branch-group':['Group','Branch'],
+    'branch-collection':['Collection','Branch'],
+    'branch-eod':['E.O.D','Branch'],
+    'branch-loan':['Loan Create / Disbursed Loan','Branch'],
+    'branch-soon-txn':['Transaction','Phase 3 me aayega'],
+    'branch-soon-reports':['Reports','Phase 3 me aayega'],
+  };
+  document.getElementById('pageTitle').textContent = titles[id][0];
+  document.getElementById('pageCrumb').textContent = titles[id][1];
+
+  if(id === 'ho-dashboard') renderHoDashboard();
+  else if(id === 'ho-notsubmit') renderNotSubmit(null);
+  else if(id === 'ho-area') renderHoArea();
+  else if(id === 'ho-branch') renderHoBranch();
+  else if(id === 'ho-staff') renderHoStaff();
+  else if(id === 'ho-import') renderHoImport();
+  else if(id === 'area-dashboard') renderAreaDashboard();
+  else if(id === 'area-notsubmit') renderNotSubmit(CURRENT_USER.areaId);
+  else if(id === 'area-branches') renderAreaBranches();
+  else if(id === 'branch-dashboard') renderBranchDashboard();
+  else if(id === 'branch-group') renderBranchGroup();
+  else if(id === 'branch-collection') renderBranchCollection();
+  else if(id === 'branch-eod') renderBranchEod();
+  else if(id === 'branch-loan') renderBranchLoan();
+  else document.getElementById('content').innerHTML = `<div class="panel"><div class="panel-body">Ye section agle phase me banega.</div></div>`;
+}
+
+/* =========================================================================
+   HEAD OFFICE
+   ========================================================================= */
+async function renderHoDashboard(){
+  const c = document.getElementById('content');
+  c.innerHTML = `<div class="panel"><div class="panel-body">Dashboard load ho raha hai...</div></div>`;
+  const [areaSnap, branchSnap, staffSnap, deathSnap] = await Promise.all([
+    db.collection('areaOffices').get(),
+    db.collection('branches').get(),
+    db.collection('users').where('role','in',['area','branch']).get(),
+    db.collection('loans').where('deceased','==', true).get()
+  ]);
+  const branches = branchSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  const areaMap = {}; areaSnap.forEach(d=> areaMap[d.id] = d.data().name);
+  const branchMap = {}; branches.forEach(b=> branchMap[b.id] = b.name);
+
+  const allStats = branches.length ? await Promise.all(branches.map(b => computeBranchStats(b.id))) : [];
+  const agg = allStats.reduce((a,s)=>({
+    borrowers: a.borrowers+s.borrowers, outstanding: a.outstanding+s.outstanding,
+    todayRealizable: a.todayRealizable+s.todayRealizable, todayCollection: a.todayCollection+s.todayCollection,
+    todayLoanAmt: a.todayLoanAmt+s.todayLoanAmt, todayLoanCount: a.todayLoanCount+s.todayLoanCount
+  }), {borrowers:0,outstanding:0,todayRealizable:0,todayCollection:0,todayLoanAmt:0,todayLoanCount:0});
+
+  let areaRows = '';
+  areaSnap.forEach(doc=>{
+    const linkedCount = branches.filter(b => b.areaId === doc.id).length;
+    areaRows += `<tr><td><strong>${esc(doc.data().name)}</strong></td><td>${linkedCount} branch</td>
+      <td><button class="btn-outline" onclick="viewAreaDashboard('${doc.id}', ${JSON.stringify(esc(doc.data().name))})">View Dashboard</button></td></tr>`;
+  });
+  if(!areaRows) areaRows = `<tr class="empty-row"><td colspan="3">Abhi tak koi Area Office nahi bana.</td></tr>`;
+
+  let branchRows = '';
+  branches.forEach((b,i)=>{
+    const s = allStats[i];
+    branchRows += `<tr>
+      <td><strong>${esc(b.name)}</strong></td>
+      <td>${b.areaId ? esc(areaMap[b.areaId]||'—') : '<span class="text-dim">Link nahi hai</span>'}</td>
+      <td>${s.borrowers}</td>
+      <td class="mono">₹${fmtAmt(s.outstanding)}</td>
+      <td class="mono">₹${fmtAmt(s.todayCollection)}</td>
+      <td>${eodBadgeHtml(s)}</td>
+      <td><button class="btn-outline" onclick="viewBranchDashboard('${b.id}', ${JSON.stringify(esc(b.name))}, 'ho')">View Dashboard</button></td>
+    </tr>`;
+  });
+  if(!branchRows) branchRows = `<tr class="empty-row"><td colspan="7">Abhi tak koi Branch nahi bani.</td></tr>`;
+
+  const pending = [], settled = [];
+  deathSnap.forEach(doc=>{
+    const d = { id: doc.id, ...doc.data() };
+    (d.settled ? settled : pending).push(d);
+  });
+  function deathRow(d, showSettleBtn){
+    return `<tr><td>${esc(branchMap[d.branchId]||'—')}</td><td><strong>${esc(d.customerName)}</strong></td>
+      <td class="mono">${esc(d.phone||'—')}</td><td class="mono">₹${fmtAmt(d.outstanding)}</td>
+      <td>${esc(d.deceasedAt||'—')}</td><td>${esc(d.deceasedRemarks||'—')}</td>
+      <td>${showSettleBtn ? `<button class="btn-sm gold" onclick="settleDeathCustomer('${d.id}')">Settlement</button>` : '<span class="badge" style="background:#DDEFE4;color:var(--green);">Settled</span>'}</td></tr>`;
+  }
+  c.innerHTML = `
+    ${statCardsHtml(agg)}
+    <div class="stat-row">
+      <div class="stat-card"><div class="label">Total Area Office</div><div class="val">${areaSnap.size}</div></div>
+      <div class="stat-card"><div class="label">Total Branch</div><div class="val">${branchSnap.size}</div></div>
+      <div class="stat-card accent"><div class="label">Total Staff</div><div class="val">${staffSnap.size}</div></div>
+      <div class="stat-card"><div class="label">Death — Settlement Pending</div><div class="val">${pending.length}</div></div>
+    </div>
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Area Office</h3></div>
+      <div class="panel-body"><table><thead><tr><th>Area Office</th><th>Linked Branch</th><th></th></tr></thead>
+      <tbody>${areaRows}</tbody></table></div>
+    </div>
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Sabhi Branch</h3></div>
+      <div class="panel-body"><table><thead><tr><th>Branch</th><th>Area Office</th><th>Borrower</th><th>Outstanding</th><th>Today Collection</th><th>E.O.D</th><th></th></tr></thead>
+      <tbody>${branchRows}</tbody></table></div>
+    </div>
+    <div id="branchDrilldown"></div>
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Death Customers</h3></div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:12px;">Sabhi branches ke death-registered customers yahan ek saath, Branch column ke saath dikhte hain. Settlement click karte hi unka Outstanding branch se hat jayega.</div>
+        ${pending.length === 0 ? '<div class="empty-row" style="padding:12px 0;color:var(--text-dim);">Koi Settlement Pending death customer nahi hai.</div>' : `
+        <table><thead><tr><th>Branch</th><th>Borrower</th><th>PH No</th><th>Outstanding</th><th>Death Date</th><th>Remarks</th><th></th></tr></thead>
+        <tbody>${pending.map(d=>deathRow(d,true)).join('')}</tbody></table>
+        `}
+        ${settled.length > 0 ? `
+        <h3 style="font-size:14px;color:var(--navy);margin:18px 0 10px;">Settled (History)</h3>
+        <table><thead><tr><th>Branch</th><th>Borrower</th><th>PH No</th><th>Outstanding</th><th>Death Date</th><th>Remarks</th><th></th></tr></thead>
+        <tbody>${settled.map(d=>deathRow(d,false)).join('')}</tbody></table>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+async function viewAreaDashboard(areaId, areaName){
+  const wrap = document.getElementById('branchDrilldown');
+  if(!wrap) return;
+  wrap.innerHTML = `<div class="panel" style="margin-top:18px;"><div class="panel-body">Area dashboard load ho raha hai...</div></div>`;
+  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+  const rendered = await buildAreaDashboardHtml(areaId, 'branchDrilldownArea');
+  wrap.innerHTML = `<div class="panel" style="margin-top:18px;">
+    <div class="panel-head"><h3>${esc(areaName)} — Area Dashboard</h3>
+      <div>
+        <button class="btn-outline" onclick="renderNotSubmit('${areaId}')" style="margin-right:8px;">Not Submit (is Area ki)</button>
+        <button class="btn-outline" onclick="document.getElementById('branchDrilldown').innerHTML=''">Band Karein</button>
+      </div>
+    </div>
+    <div class="panel-body">${rendered}</div>
+  </div>`;
+}
+async function settleDeathCustomer(loanId){
+  if(!confirm('Confirm karein: is customer ka outstanding branch se hata diya jayega aur loan close ho jayega.')) return;
+  try{
+    await db.collection('loans').doc(loanId).update({
+      outstanding: 0, settled: true, settledAt: todayStr(), status: 'closed'
+    });
+    toast('Settlement ho gaya — outstanding branch se hat gaya');
+    renderHoDashboard();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Area Office CRUD ----
+async function renderHoArea(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Area Office</h3><button class="btn-sm gold" onclick="openAreaForm()">+ Naya Area Office</button></div>
+      <div class="panel-body">
+        <table><thead><tr><th>Naam</th><th>Address</th><th>Branches Linked</th><th></th></tr></thead>
+        <tbody id="areaTableBody"><tr class="empty-row"><td colspan="4">Load ho raha hai...</td></tr></tbody></table>
+      </div>
+    </div>`;
+  const [areaSnap, branchSnap] = await Promise.all([
+    db.collection('areaOffices').orderBy('createdAt','desc').get(),
+    db.collection('branches').get()
+  ]);
+  if(areaSnap.empty){
+    document.getElementById('areaTableBody').innerHTML = `<tr class="empty-row"><td colspan="4">Abhi tak koi Area Office nahi bana.</td></tr>`;
+    return;
+  }
+  let rows = '';
+  areaSnap.forEach(doc=>{
+    const d = doc.data();
+    const linkedCount = branchSnap.docs.filter(b => b.data().areaId === doc.id).length;
+    rows += `<tr>
+      <td><strong>${esc(d.name)}</strong></td>
+      <td>${esc(d.address||'—')}</td>
+      <td>${linkedCount} branch</td>
+      <td><button class="btn-outline" onclick="openAreaForm('${doc.id}')">Edit</button></td>
+    </tr>`;
+  });
+  document.getElementById('areaTableBody').innerHTML = rows;
+}
+async function openAreaForm(id){
+  let d = {name:'',address:''};
+  if(id){ const s = await db.collection('areaOffices').doc(id).get(); d = s.data(); }
+  openModal(`
+    <h3>${id ? 'Area Office Edit Karein' : 'Naya Area Office'}</h3>
+    <div class="field"><label>Area Office ka Naam</label><input id="af_name" value="${esc(d.name)}"></div>
+    <div class="field"><label>Address</label><input id="af_address" value="${esc(d.address)}"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveArea('${id||''}')">Save</button>
+    </div>
+  `);
+}
+async function saveArea(id){
+  const name = document.getElementById('af_name').value.trim();
+  const address = document.getElementById('af_address').value.trim();
+  if(!name){ toast('Naam dalna zaroori hai', true); return; }
+  try{
+    if(id){
+      await db.collection('areaOffices').doc(id).update({name, address});
+    }else{
+      await db.collection('areaOffices').add({name, address, createdAt: Date.now()});
+    }
+    closeModal(); toast('Area Office save ho gaya'); renderHoArea();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Branch CRUD (+ link to area) ----
+async function renderHoBranch(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Branch</h3><button class="btn-sm gold" onclick="openBranchForm()">+ Nayi Branch</button></div>
+      <div class="panel-body">
+        <table><thead><tr><th>Branch Naam</th><th>Address</th><th>Linked Area Office</th><th>Cash In Hand</th><th></th></tr></thead>
+        <tbody id="branchTableBody"><tr class="empty-row"><td colspan="5">Load ho raha hai...</td></tr></tbody></table>
+      </div>
+    </div>`;
+  const [branchSnap, areaSnap] = await Promise.all([
+    db.collection('branches').orderBy('createdAt','desc').get(),
+    db.collection('areaOffices').get()
+  ]);
+  const areaMap = {}; areaSnap.forEach(d=> areaMap[d.id] = d.data().name);
+  if(branchSnap.empty){
+    document.getElementById('branchTableBody').innerHTML = `<tr class="empty-row"><td colspan="5">Abhi tak koi Branch nahi bani.</td></tr>`;
+    return;
+  }
+  let rows = '';
+  branchSnap.forEach(doc=>{
+    const d = doc.data();
+    const cashShown = d.cashInHand != null
+      ? `₹${fmtAmt(d.cashInHand)}${d.cashInHandAsOf ? ' <span class="text-dim" style="font-size:11px;">(as of '+esc(d.cashInHandAsOf)+')</span>' : ''}`
+      : '<span class="text-dim">Set nahi hai</span>';
+    rows += `<tr>
+      <td><strong>${esc(d.name)}</strong></td>
+      <td>${esc(d.address||'—')}</td>
+      <td>${d.areaId ? esc(areaMap[d.areaId]||'—') : '<span class="text-dim">Link nahi hai</span>'}</td>
+      <td class="mono">${cashShown}</td>
+      <td>
+        <button class="btn-outline" onclick="openBranchForm('${doc.id}')">Edit</button>
+        <button class="btn-outline" onclick='openCashForm(${JSON.stringify(doc.id)}, ${JSON.stringify(d.name)}, ${d.cashInHand!=null?d.cashInHand:'null'}, ${JSON.stringify(d.cashInHandAsOf||'')})'>Cash In Hand</button>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('branchTableBody').innerHTML = rows;
+}
+function openCashForm(branchId, branchName, currentAmt, currentDate){
+  openModal(`
+    <h3>Opening Cash In Hand — ${esc(branchName)}</h3>
+    <div class="helper" style="margin-bottom:12px;">Ye ek baar Head Office se set kiya jata hai (jaise 30/06/2026 ka closing cash in hand). Submit karte hi ye amount is Branch ke Cash In Hand me update ho jayega.</div>
+    <div class="field"><label>Closing Cash In Hand Date</label><input type="date" id="cf_date" value="${esc(currentDate||'')}"></div>
+    <div class="field"><label>Amount</label><input type="number" id="cf_amt" value="${currentAmt!=null?currentAmt:''}"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveCashInHand('${branchId}')">Submit</button>
+    </div>
+  `);
+}
+async function saveCashInHand(branchId){
+  const date = document.getElementById('cf_date').value;
+  const amt = parseFloat(document.getElementById('cf_amt').value);
+  if(!date){ toast('Date select karein', true); return; }
+  if(isNaN(amt) || amt < 0){ toast('Amount sahi se dalein', true); return; }
+  try{
+    await db.collection('branches').doc(branchId).update({ cashInHand: amt, cashInHandAsOf: date, cashInHandSetAt: Date.now() });
+    closeModal(); toast('Cash In Hand branch me update ho gaya'); renderHoBranch();
+  }catch(e){ toast(e.message, true); }
+}
+async function openBranchForm(id){
+  let d = {name:'',address:'',areaId:''};
+  if(id){ const s = await db.collection('branches').doc(id).get(); d = s.data(); }
+  const areaSnap = await db.collection('areaOffices').get();
+  let options = '<option value="">— Area Office Select Karein —</option>';
+  areaSnap.forEach(doc=>{
+    options += `<option value="${doc.id}" ${d.areaId===doc.id?'selected':''}>${esc(doc.data().name)}</option>`;
+  });
+  openModal(`
+    <h3>${id ? 'Branch Edit Karein' : 'Nayi Branch'}</h3>
+    <div class="field"><label>Branch ka Naam</label><input id="bf_name" value="${esc(d.name)}"></div>
+    <div class="field"><label>Address</label><input id="bf_address" value="${esc(d.address)}"></div>
+    <div class="field"><label>Area Office se Link Karein</label><select id="bf_area">${options}</select></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveBranch('${id||''}')">Save</button>
+    </div>
+  `);
+}
+async function saveBranch(id){
+  const name = document.getElementById('bf_name').value.trim();
+  const address = document.getElementById('bf_address').value.trim();
+  const areaId = document.getElementById('bf_area').value || null;
+  if(!name){ toast('Naam dalna zaroori hai', true); return; }
+  try{
+    if(id){
+      await db.collection('branches').doc(id).update({name, address, areaId});
+    }else{
+      await db.collection('branches').add({name, address, areaId, createdAt: Date.now()});
+    }
+    closeModal(); toast('Branch save ho gayi'); renderHoBranch();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Staff Management ----
+// Head Office har staff ko Naam + real Email + Role + Area/Branch se link karta hai.
+// Activation email seedha usi mail id par jaata hai (Firebase ke through) — sirf jiske
+// paas us mail id ka access hai, wahi activation link khol kar apna password set kar
+// payega aur is project me kaam kar payega.
+async function staffEmailExists(email){
+  const [s1, s2] = await Promise.all([
+    db.collection('users').where('email','==', email).limit(1).get(),
+    db.collection('pendingStaff').where('email','==', email).where('activated','==', false).limit(1).get()
+  ]);
+  return !s1.empty || !s2.empty;
+}
+function activationLink(pendingId){
+  return location.origin + location.pathname + '?activate=' + pendingId;
+}
+async function renderHoStaff(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Staff Management</h3><button class="btn-sm gold" onclick="openStaffForm()">+ Naya Staff</button></div>
+      <div class="panel-body">
+        <table><thead><tr><th>Naam</th><th>Email</th><th>Role</th><th>Linked</th><th>Status / Password</th></tr></thead>
+        <tbody id="staffTableBody"><tr class="empty-row"><td colspan="5">Load ho raha hai...</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Staff Directory (Existing Staff Bulk Upload)</h3></div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:14px;">
+          Existing staff ki list (Naam, Ph No, Mail ID) ek saath upload karein. Excel/CSV me columns is order me hone chahiye:<br>
+          <strong>Name | Ph No | Mail ID</strong><br>
+          Upload karne ke baad, neeche list me se jis staff ko Head Office kisi Branch/Area se "Link" karega, sirf usi ka mail id activate hoga aur wahi is project me kaam kar payega — baaki sab tab tak login nahi kar sakte jab tak link na ho.
+        </div>
+        <div class="field"><label>Excel File (.xlsx / .xls / .csv)</label><input type="file" id="staffDirFile" class="no-upper" accept=".xlsx,.xls,.csv"></div>
+        <button class="btn-sm gold" onclick="runStaffDirectoryImport()">Upload Karein</button>
+        <div id="staffDirImportResult" style="margin-top:12px;"></div>
+        <div style="margin-top:18px;">
+          <table><thead><tr><th>Naam</th><th>Ph No</th><th>Mail ID</th><th>Status</th></tr></thead>
+          <tbody id="staffDirTableBody"><tr class="empty-row"><td colspan="4">Load ho raha hai...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>`;
+  const [userSnap, pendingSnap, areaSnap, branchSnap] = await Promise.all([
+    db.collection('users').where('role','in',['area','branch']).get(),
+    db.collection('pendingStaff').where('activated','==', false).get(),
+    db.collection('areaOffices').get(),
+    db.collection('branches').get()
+  ]);
+  const areaMap = {}; areaSnap.forEach(d=> areaMap[d.id] = d.data().name);
+  const branchMap = {}; branchSnap.forEach(d=> branchMap[d.id] = d.data().name);
+  if(userSnap.empty && pendingSnap.empty){
+    document.getElementById('staffTableBody').innerHTML = `<tr class="empty-row"><td colspan="5">Abhi tak koi staff nahi bana.</td></tr>`;
+  }else{
+    let rows = '';
+    let i = 0;
+    userSnap.forEach(doc=>{
+      const d = doc.data();
+      const badge = d.role === 'area' ? '<span class="badge area">Area Head</span>' : '<span class="badge branch">Branch Staff</span>';
+      const linked = d.role === 'area' ? (areaMap[d.areaId]||'—') : (branchMap[d.branchId]||'—');
+      const pid = 'pw' + (i++);
+      rows += `<tr><td>${esc(d.name)}</td><td class="mono">${esc(d.email || '—')}</td><td>${badge}</td><td>${esc(linked)}</td>
+        <td><div class="staff-pw-cell">
+          <span class="badge" style="background:#DDEFE4;color:var(--green);">Active</span>
+          <input id="${pid}" class="mono" value="${esc(d.password||'')}" disabled type="password" style="width:110px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;">
+          <span class="pw-eye" onclick="togglePw('${pid}', this)">👁</span>
+          <button class="btn-outline" onclick='openRelinkForm(${JSON.stringify(doc.id)}, ${JSON.stringify(esc(d.name))}, ${JSON.stringify(d.role)})'>Branch Badlein</button>
+        </div></td></tr>`;
+    });
+    pendingSnap.forEach(doc=>{
+      const d = doc.data();
+      const badge = d.role === 'area' ? '<span class="badge area">Area Head</span>' : '<span class="badge branch">Branch Staff</span>';
+      const linked = d.role === 'area' ? (areaMap[d.areaId]||'—') : (branchMap[d.branchId]||'—');
+      rows += `<tr><td>${esc(d.name)}</td><td class="mono">${esc(d.email)}</td><td>${badge}</td><td>${esc(linked)}</td>
+        <td><span class="badge" style="background:#FCE9D4;color:var(--amber);margin-right:6px;">Email Bheja Gaya — Pending</span>
+          <button class="btn-outline" onclick="sendActivationEmail('${doc.id}', '${esc(d.email)}')">Resend Email</button></td></tr>`;
+    });
+    document.getElementById('staffTableBody').innerHTML = rows;
+  }
+
+  // Staff Directory (bulk uploaded, not yet linked to a Branch/Area)
+  const dirSnap = await db.collection('staffDirectory').orderBy('createdAt','desc').get();
+  if(dirSnap.empty){
+    document.getElementById('staffDirTableBody').innerHTML = `<tr class="empty-row"><td colspan="4">Abhi tak koi staff list upload nahi hui.</td></tr>`;
+  }else{
+    let rows2 = '';
+    dirSnap.forEach(doc=>{
+      const d = doc.data();
+      if(d.linked){
+        rows2 += `<tr><td>${esc(d.name)}</td><td class="mono">${esc(d.phone||'—')}</td><td class="mono">${esc(d.email)}</td>
+          <td><span class="badge" style="background:#DDEFE4;color:var(--green);">Linked</span></td></tr>`;
+      }else{
+        rows2 += `<tr><td>${esc(d.name)}</td><td class="mono">${esc(d.phone||'—')}</td><td class="mono">${esc(d.email)}</td>
+          <td><button class="btn-sm gold" onclick='openDirectoryLinkForm(${JSON.stringify(doc.id)}, ${JSON.stringify(d.name)}, ${JSON.stringify(d.phone||'')}, ${JSON.stringify(d.email)})'>Link to Branch/Area</button></td></tr>`;
+      }
+    });
+    document.getElementById('staffDirTableBody').innerHTML = rows2;
+  }
+}
+async function runStaffDirectoryImport(){
+  const fileInput = document.getElementById('staffDirFile');
+  const file = fileInput.files[0];
+  const resultBox = document.getElementById('staffDirImportResult');
+  if(!file){ toast('Pehle Excel file select karein', true); return; }
+  if(typeof XLSX === 'undefined'){ resultBox.innerHTML = 'Excel padhne wali library load nahi ho payi — internet check karke page reload karein.'; return; }
+  resultBox.innerHTML = 'File padhi ja rahi hai...';
+  try{
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+    if(allRows.length < 2){ resultBox.innerHTML = 'File me koi data row nahi mili.'; return; }
+    const dataRows = allRows.slice(1).filter(r => r.some(cell => String(cell).trim() !== ''));
+    let success = 0, skipped = 0;
+    const errors = [];
+    let batch = db.batch(), batchCount = 0;
+    async function flush(){ if(batchCount > 0){ await batch.commit(); batch = db.batch(); batchCount = 0; } }
+    for(let i = 0; i < dataRows.length; i++){
+      const r = dataRows[i];
+      const name = String(r[0]||'').trim().toUpperCase();
+      const phone = String(r[1]||'').trim();
+      const email = String(r[2]||'').trim().toLowerCase();
+      if(!name || !email){ skipped++; errors.push(`Row ${i+2}: Naam ya Mail ID khali hai — skip ki gayi`); continue; }
+      const ref = db.collection('staffDirectory').doc();
+      batch.set(ref, { name, phone, email, linked: false, createdAt: Date.now() });
+      batchCount++; success++;
+      if(batchCount >= 400) await flush();
+    }
+    await flush();
+    let html = `<div class="helper"><strong>${success}</strong> staff list me add hue.`;
+    if(skipped) html += ` <strong>${skipped}</strong> rows skip hui.`;
+    html += `</div>`;
+    if(errors.length) html += `<div style="margin-top:10px;font-size:12.5px;color:#b3261e;">${errors.join('<br>')}</div>`;
+    resultBox.innerHTML = html;
+    fileInput.value = '';
+    renderHoStaff();
+  }catch(e){ resultBox.innerHTML = 'Error: ' + esc(e.message); }
+}
+async function openDirectoryLinkForm(dirId, name, phone, email){
+  const [areaSnap, branchSnap] = await Promise.all([
+    db.collection('areaOffices').get(),
+    db.collection('branches').get()
+  ]);
+  let areaOptions = '<option value="">— Select —</option>';
+  areaSnap.forEach(d=> areaOptions += `<option value="${d.id}">${esc(d.data().name)}</option>`);
+  let branchOptions = '<option value="">— Select —</option>';
+  branchSnap.forEach(d=> branchOptions += `<option value="${d.id}">${esc(d.data().name)}</option>`);
+  openModal(`
+    <h3>${esc(name)} ko Link Karein</h3>
+    <div class="helper" style="margin-bottom:10px;">Mail ID: <strong class="mono">${esc(email)}</strong> — activation ke baad staff isi email se login karega.</div>
+    <div class="field">
+      <label>Role</label>
+      <select id="dl_role" onchange="directoryRoleChanged()">
+        <option value="area">Area Head</option>
+        <option value="branch">Branch Staff</option>
+      </select>
+    </div>
+    <div class="field" id="dl_areaWrap"><label>Kaunsa Area Office</label><select id="dl_area">${areaOptions}</select></div>
+    <div class="field" id="dl_branchWrap" style="display:none;"><label>Kaunsi Branch</label><select id="dl_branch">${branchOptions}</select></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick='saveDirectoryLink(${JSON.stringify(dirId)}, ${JSON.stringify(name)}, ${JSON.stringify(email)})'>Link Karein</button>
+    </div>
+  `);
+}
+function directoryRoleChanged(){
+  const role = document.getElementById('dl_role').value;
+  document.getElementById('dl_areaWrap').style.display = role === 'area' ? 'block' : 'none';
+  document.getElementById('dl_branchWrap').style.display = role === 'branch' ? 'block' : 'none';
+}
+async function saveDirectoryLink(dirId, name, email){
+  const role = document.getElementById('dl_role').value;
+  const areaId = role === 'area' ? (document.getElementById('dl_area').value || null) : null;
+  const branchId = role === 'branch' ? (document.getElementById('dl_branch').value || null) : null;
+  if(role === 'area' && !areaId){ toast('Area Office select karein', true); return; }
+  if(role === 'branch' && !branchId){ toast('Branch select karein', true); return; }
+  try{
+    const ref = await db.collection('pendingStaff').add({
+      name, email, role, areaId, branchId, activated: false, source: 'directory', directoryId: dirId, createdAt: Date.now()
+    });
+    await db.collection('staffDirectory').doc(dirId).update({ linked: true, pendingId: ref.id });
+    await sendActivationEmail(ref.id, email);
+    closeModal();
+    openModal(`
+      <h3>Staff Link Ho Gaya</h3>
+      <div class="helper" style="margin-bottom:10px;">
+        Activation email <strong>${esc(email)}</strong> par bhej diya gaya hai. Sirf jiske paas is mail id ka access hai, wahi is link ko khol kar apna password set kar payega aur is project me kaam kar payega.
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">Band Karein</button>
+        <button class="btn-sm gold" onclick="sendActivationEmail('${ref.id}', '${esc(email)}')">Email Dubara Bhejein</button>
+      </div>
+    `);
+    renderHoStaff();
+  }catch(e){ toast(e.message, true); }
+}
+async function openStaffForm(){
+  const [areaSnap, branchSnap] = await Promise.all([
+    db.collection('areaOffices').get(),
+    db.collection('branches').get()
+  ]);
+  let areaOptions = '<option value="">— Select —</option>';
+  areaSnap.forEach(d=> areaOptions += `<option value="${d.id}">${esc(d.data().name)}</option>`);
+  let branchOptions = '<option value="">— Select —</option>';
+  branchSnap.forEach(d=> branchOptions += `<option value="${d.id}">${esc(d.data().name)}</option>`);
+
+  openModal(`
+    <h3>Naya Staff Banayein</h3>
+    <div class="field"><label>Naam</label><input id="sf_name"></div>
+    <div class="field"><label>Email</label><input id="sf_email" class="no-upper" placeholder="staff@company.in"></div>
+    <div class="helper" style="margin-top:-8px;margin-bottom:10px;">Activation email isi mail id par jayega — sirf jiske paas is mail id ka access hai, wahi apna password set karke is project me kaam kar payega.</div>
+    <div class="field">
+      <label>Role</label>
+      <select id="sf_role" onchange="staffRoleChanged()">
+        <option value="area">Area Head</option>
+        <option value="branch">Branch Staff</option>
+      </select>
+    </div>
+    <div class="field" id="sf_areaWrap"><label>Kaunsa Area Office</label><select id="sf_area">${areaOptions}</select></div>
+    <div class="field" id="sf_branchWrap" style="display:none;"><label>Kaunsi Branch</label><select id="sf_branch">${branchOptions}</select></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveStaff()">Banayein</button>
+    </div>
+  `);
+}
+function staffRoleChanged(){
+  const role = document.getElementById('sf_role').value;
+  document.getElementById('sf_areaWrap').style.display = role === 'area' ? 'block' : 'none';
+  document.getElementById('sf_branchWrap').style.display = role === 'branch' ? 'block' : 'none';
+}
+async function saveStaff(){
+  const name = document.getElementById('sf_name').value.trim();
+  const email = document.getElementById('sf_email').value.trim().toLowerCase();
+  const role = document.getElementById('sf_role').value;
+  const areaId = role === 'area' ? (document.getElementById('sf_area').value || null) : null;
+  const branchId = role === 'branch' ? (document.getElementById('sf_branch').value || null) : null;
+
+  if(!name){ toast('Naam dalein', true); return; }
+  if(!email || !email.includes('@')){ toast('Sahi Email dalein', true); return; }
+  if(role === 'area' && !areaId){ toast('Area Office select karein', true); return; }
+  if(role === 'branch' && !branchId){ toast('Branch select karein', true); return; }
+
+  try{
+    if(await staffEmailExists(email)){ toast('Is email se pehle se koi staff record hai', true); return; }
+    const ref = await db.collection('pendingStaff').add({
+      name, email, role, areaId, branchId, activated: false, createdAt: Date.now()
+    });
+    await sendActivationEmail(ref.id, email);
+    closeModal();
+    openModal(`
+      <h3>Staff Ban Gaya</h3>
+      <div class="helper" style="margin-bottom:10px;">
+        Activation email <strong>${esc(email)}</strong> par bhej diya gaya hai. Sirf jiske paas is mail id ka access hai, wahi is link ko khol kar apna password set kar payega.
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">Band Karein</button>
+        <button class="btn-sm gold" onclick="sendActivationEmail('${ref.id}', '${esc(email)}')">Email Dubara Bhejein</button>
+      </div>
+    `);
+    renderHoStaff();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Active staff ko ek Branch/Area se dusre Branch/Area me turant link karna ----
+// (naya activation nahi lagta — turant unka data update ho jata hai aur agli baar
+// login karte hi wo naye Branch/Area ka data dekhega.)
+async function openRelinkForm(uid, name, role){
+  const isArea = role === 'area';
+  const [areaSnap, branchSnap] = await Promise.all([
+    db.collection('areaOffices').get(),
+    db.collection('branches').get()
+  ]);
+  let options = '<option value="">— Select —</option>';
+  (isArea ? areaSnap : branchSnap).forEach(d => options += `<option value="${d.id}">${esc(d.data().name)}</option>`);
+  openModal(`
+    <h3>${esc(name)} — ${isArea ? 'Area Office' : 'Branch'} Badlein</h3>
+    <div class="helper" style="margin-bottom:10px;">Link karte hi is staff ko turant nayi ${isArea ? 'Area Office' : 'Branch'} ka data dikhne lagega — dobara activation ki zaroorat nahi.</div>
+    <div class="field"><label>${isArea ? 'Area Office' : 'Branch'} Select Karein</label><select id="rl_target">${options}</select></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick='saveRelink(${JSON.stringify(uid)}, ${JSON.stringify(role)})'>Link Karein</button>
+    </div>
+  `);
+}
+async function saveRelink(uid, role){
+  const targetId = document.getElementById('rl_target').value;
+  if(!targetId){ toast('Select karein', true); return; }
+  try{
+    if(role === 'area') await db.collection('users').doc(uid).update({ areaId: targetId });
+    else await db.collection('users').doc(uid).update({ branchId: targetId });
+    closeModal(); toast('Link update ho gaya'); renderHoStaff();
+  }catch(e){ toast(e.message, true); }
+}
+
+/* =========================================================================
+   DATA IMPORT — ek baar Excel se purana data (Borrower/Loan) load karne ke liye.
+   Column order (pehli row header): Day | Group Name | Borrower Name | Disb Date |
+   Loan Amt | Co Applicant Name | Ph No | Branch Name | Outstanding | Remarks
+   Jo cell khali ho, wo field database me blank/0 rehti hai — admin baad me
+   Update Details se bhar sakta hai. Sab function (Collection, Loan Closer,
+   Dashboard) khali fields ke saath bhi sahi se kaam karte hain.
+   ========================================================================= */
+function renderHoImport(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Data Import</h3></div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:14px;">
+          Excel/CSV file me pehli row header honi chahiye, aur columns isi order me hone chahiye:<br>
+          <strong>Day | Group Name | Borrower Name | Disb Date | Loan Amt | Co Applicant Name | Ph No | Branch Name | Outstanding | Remarks</strong><br><br>
+          &bull; <strong>Day</strong> me Monday se Friday tak koi ek din likhein — naya Group banega to uska Collection Day yahi set ho jayega (agar existing Group ka din pehle se khali hoga, to wo bhi yahi se set ho jayega).<br>
+          &bull; <strong>Branch Name</strong> pehle se "Branches" me bana hua hona chahiye (naam se match hota hai), warna wo row skip ho jayegi.<br>
+          &bull; <strong>Group Name</strong> agar us Branch me pehle se nahi hai, to naya Group khud ban jayega.<br>
+          &bull; Jis bhi column me kuch data nahi hoga, wo yahan blank hi save hogi — Interest Rate, File Charge, EMI No jaise details baad me Loan &rarr; Update Details se admin bhar sakta hai.<br>
+          &bull; <strong>Remarks</strong> me agar "OVERDUE" likha hoga, to wo customer seedhe Collection ke Overdue section me chala jayega — wo Realizable ya Advance list me kabhi nahi dikhega.<br>
+          &bull; Ye import ek hi baar karein — dubara same file import karne se loans duplicate ho jayenge.
+        </div>
+        <div class="field"><label>Excel File (.xlsx / .xls / .csv)</label><input type="file" id="importFile" class="no-upper" accept=".xlsx,.xls,.csv"></div>
+        <button class="btn-sm gold" onclick="runDataImport()">Import Karein</button>
+        <div id="importResult" style="margin-top:18px;"></div>
+      </div>
+    </div>`;
+}
+async function runDataImport(){
+  const fileInput = document.getElementById('importFile');
+  const file = fileInput.files[0];
+  const resultBox = document.getElementById('importResult');
+  if(!file){ toast('Pehle Excel file select karein', true); return; }
+  if(typeof XLSX === 'undefined'){ resultBox.innerHTML = 'Excel padhne wali library load nahi ho payi — internet check karke page reload karein.'; return; }
+  resultBox.innerHTML = 'File padhi ja rahi hai...';
+  try{
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+    if(allRows.length < 2){ resultBox.innerHTML = 'File me koi data row nahi mili.'; return; }
+    const dataRows = allRows.slice(1).filter(r => r.some(cell => String(cell).trim() !== ''));
+    if(dataRows.length === 0){ resultBox.innerHTML = 'File me koi data row nahi mili.'; return; }
+    resultBox.innerHTML = `${dataRows.length} rows mili — import ho raha hai, thoda intezaar karein...`;
+
+    const branchSnap = await db.collection('branches').get();
+    const branchByName = {};
+    branchSnap.forEach(doc => { branchByName[String(doc.data().name).trim().toUpperCase()] = doc.id; });
+
+    function normalizeDay(raw){
+      const s = String(raw||'').trim().toUpperCase();
+      if(!s) return '';
+      const found = DAYS.find(d => d.toUpperCase() === s);
+      return found || '';
+    }
+
+    const groupCache = {};
+    async function resolveGroup(branchId, groupNameUpper, day){
+      if(!groupNameUpper) return null;
+      const key = branchId + '||' + groupNameUpper;
+      if(groupCache[key]) return groupCache[key];
+      const gsnap = await db.collection('groups').where('branchId','==',branchId).where('name','==',groupNameUpper).limit(1).get();
+      let groupId;
+      if(!gsnap.empty){
+        groupId = gsnap.docs[0].id;
+        // agar existing group ka Collection Day khali hai aur is row me Day diya hai, to fill kar dein
+        const existing = gsnap.docs[0].data();
+        if(!existing.collectionDay && day){
+          await db.collection('groups').doc(groupId).update({ collectionDay: day });
+        }
+      }else{
+        const newG = await db.collection('groups').add({ name: groupNameUpper, address: '', collectionDay: day || '', branchId, createdAt: Date.now() });
+        groupId = newG.id;
+      }
+      groupCache[key] = groupId;
+      return groupId;
+    }
+    function parseDisbDate(raw){
+      if(raw instanceof Date && !isNaN(raw)) return raw.toISOString().slice(0,10);
+      const s = String(raw||'').trim();
+      if(!s) return '';
+      let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m) return `${m[1]}-${m[2]}-${m[3]}`;
+      m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if(m){
+        let [, d, mo, y] = m;
+        if(y.length === 2) y = '20' + y;
+        return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+      }
+      return '';
+    }
+
+    let success = 0, skipped = 0, overdueImported = 0;
+    const errors = [];
+    let batch = db.batch(), batchCount = 0;
+    async function flush(){ if(batchCount > 0){ await batch.commit(); batch = db.batch(); batchCount = 0; } }
+
+    for(let i = 0; i < dataRows.length; i++){
+      const r = dataRows[i];
+      const day = normalizeDay(r[0]);
+      const groupNameUpper = String(r[1]||'').trim().toUpperCase();
+      const borrowerName = String(r[2]||'').trim().toUpperCase();
+      const disbDate = parseDisbDate(r[3]);
+      const loanAmt = parseFloat(r[4]) || 0;
+      const coApplicantName = String(r[5]||'').trim().toUpperCase();
+      const phone = String(r[6]||'').trim();
+      const branchNameUpper = String(r[7]||'').trim().toUpperCase();
+      const outstandingRaw = parseFloat(r[8]);
+      const remarks = String(r[9]||'').trim().toUpperCase();
+      const isOverdue = remarks.includes('OVERDUE');
+
+      if(!branchNameUpper || !branchByName[branchNameUpper]){
+        skipped++; errors.push(`Row ${i+2}: Branch "${esc(r[7])}" system me nahi mili — skip ki gayi`); continue;
+      }
+      if(!groupNameUpper){
+        skipped++; errors.push(`Row ${i+2}: Group Name khali hai — skip ki gayi (Group ke bina loan Collection list me kabhi nahi aayega)`); continue;
+      }
+      if(!borrowerName){
+        skipped++; errors.push(`Row ${i+2}: Borrower Name khali hai — skip ki gayi`); continue;
+      }
+      const branchId = branchByName[branchNameUpper];
+      let groupId = null;
+      try{ groupId = await resolveGroup(branchId, groupNameUpper, day); }
+      catch(ge){ skipped++; errors.push(`Row ${i+2}: Group resolve nahi hua (${ge.message})`); continue; }
+
+      const loanRef = db.collection('loans').doc();
+      batch.set(loanRef, {
+        groupId, branchId, collectionDay: day,
+        customerName: borrowerName, customerDob: '', phone, altPhone: '', address: '', aadhaar: '', pan: '',
+        bankAccNo: '', ifsc: '',
+        loanAmt, interestRate: 0, interestAmt: 0, fileChargePct: 0, fileCharge: 0,
+        emiAmt: 0, lastEmiAmt: 0, tenureWeeks: 0,
+        outstanding: isNaN(outstandingRaw) ? loanAmt : outstandingRaw, emisPaid: 0,
+        coApplicantName, coApplicantDob: '', remarks,
+        overdue: isOverdue, deceased: false, settled: false,
+        status: 'active', disbDate, createdDateStr: disbDate || todayStr(), createdAt: Date.now(),
+        imported: true
+      });
+      batchCount++; success++;
+      if(isOverdue) overdueImported++;
+      if(batchCount >= 400) await flush();
+    }
+    await flush();
+
+    let html = `<div class="helper"><strong>${success}</strong> loan/borrower record import ho gaye.`;
+    if(overdueImported) html += ` Inme se <strong>${overdueImported}</strong> "OVERDUE" Remarks ki wajah se seedhe Overdue section me chale gaye.`;
+    if(skipped) html += ` <strong>${skipped}</strong> rows skip hui (neeche detail hai).`;
+    html += `</div>`;
+    if(errors.length){
+      html += `<div style="margin-top:10px;max-height:220px;overflow:auto;font-size:12.5px;color:#b3261e;">${errors.join('<br>')}</div>`;
+    }
+    resultBox.innerHTML = html;
+    toast(success + ' record import ho gaye');
+    fileInput.value = '';
+  }catch(e){
+    resultBox.innerHTML = 'Error: ' + esc(e.message);
+  }
+}
+
+/* =========================================================================
+   AREA OFFICE (read-only Phase 1 view of linked branches)
+   ========================================================================= */
+/* =========================================================================
+   SHARED: 5 core stats (Total Borrower, Total Outstanding, Today Realizable,
+   Today Collection, Today Loan) — Branch, Area (sum of branches) aur Head
+   Office (sum of all branches) teeno jagah isi function se dikhte hain.
+   ========================================================================= */
+async function computeBranchStats(branchId, date){
+  date = date || todayStr();
+  const day = dayNameForDate(date);
+  const [groupSnap, activeLoanSnap, staging, todayLoanSnap, eodDoc] = await Promise.all([
+    db.collection('groups').where('branchId','==', branchId).get(),
+    db.collection('loans').where('branchId','==', branchId).where('status','==','active').get(),
+    loadStagingDoc(branchId, date),
+    db.collection('loans').where('branchId','==', branchId).where('disbDate','==', date).get(),
+    loadEodDoc(branchId, date)
+  ]);
+  const todaysGroupIds = new Set(groupSnap.docs.filter(g => g.data().collectionDay === day).map(g => g.id));
+  let outstanding = 0, todayRealizable = 0, borrowerCount = 0;
+  activeLoanSnap.forEach(doc=>{
+    const d = doc.data();
+    if(d.deceased) return;
+    borrowerCount++;
+    outstanding += (d.outstanding||0);
+    if(todaysGroupIds.has(d.groupId) && !d.overdue){
+      const isLastEmi = (d.emisPaid||0) >= (d.tenureWeeks||1) - 1;
+      todayRealizable += isLastEmi ? (d.lastEmiAmt != null ? d.lastEmiAmt : d.emiAmt) : d.emiAmt;
+    }
+  });
+  const totals = stagingTotals(staging);
+  let todayLoanAmt = 0;
+  todayLoanSnap.forEach(doc=> todayLoanAmt += (doc.data().loanAmt||0));
+  return {
+    branchId, date, day,
+    borrowers: borrowerCount,
+    outstanding,
+    todayRealizable,
+    todayCollection: totals.total,
+    collectionBreakup: totals,
+    todayLoanCount: todayLoanSnap.size,
+    todayLoanAmt,
+    totalGroups: groupSnap.size,
+    todaysGroupCount: todaysGroupIds.size,
+    groupsSavedToday: (staging.savedGroups && staging.savedGroups.realizable) ? staging.savedGroups.realizable.length : 0,
+    eodSubmitted: !!eodDoc
+  };
+}
+function statCardsHtml(s){
+  return `
+    <div class="stat-row">
+      <div class="stat-card"><div class="label">Total Borrower</div><div class="val">${s.borrowers}</div></div>
+      <div class="stat-card"><div class="label">Total Outstanding</div><div class="val mono">₹${fmtAmt(s.outstanding)}</div></div>
+      <div class="stat-card"><div class="label">Today Realizable</div><div class="val mono">₹${fmtAmt(s.todayRealizable)}</div></div>
+      <div class="stat-card accent"><div class="label">Today Collection</div><div class="val mono">₹${fmtAmt(s.todayCollection)}</div></div>
+      <div class="stat-card"><div class="label">Today Loan</div><div class="val mono">₹${fmtAmt(s.todayLoanAmt)}</div><div class="helper">${s.todayLoanCount} loan disbursed</div></div>
+    </div>`;
+}
+function eodBadgeHtml(s){
+  return s.eodSubmitted
+    ? '<span class="badge" style="background:#DDEFE4;color:var(--green);">E.O.D Submitted</span>'
+    : '<span class="badge" style="background:#FCE9D4;color:var(--amber);">E.O.D Pending</span>';
+}
+
+async function buildAreaDashboardHtml(areaId, drilldownId){
+  const branchSnap = await db.collection('branches').where('areaId','==', areaId).get();
+  if(branchSnap.empty){
+    return `<div class="stat-row"><div class="stat-card"><div class="label">Linked Branch</div><div class="val">0</div></div></div>
+      <div class="panel"><div class="panel-body">Abhi tak koi branch is area se link nahi hai.</div></div>`;
+  }
+  const branches = branchSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  const allStats = await Promise.all(branches.map(b => computeBranchStats(b.id)));
+
+  const agg = allStats.reduce((a,s)=>({
+    borrowers: a.borrowers+s.borrowers, outstanding: a.outstanding+s.outstanding,
+    todayRealizable: a.todayRealizable+s.todayRealizable, todayCollection: a.todayCollection+s.todayCollection,
+    todayLoanAmt: a.todayLoanAmt+s.todayLoanAmt, todayLoanCount: a.todayLoanCount+s.todayLoanCount
+  }), {borrowers:0,outstanding:0,todayRealizable:0,todayCollection:0,todayLoanAmt:0,todayLoanCount:0});
+
+  let rows = '';
+  branches.forEach((b, i)=>{
+    const s = allStats[i];
+    rows += `<tr>
+      <td><strong>${esc(b.name)}</strong></td>
+      <td>${s.borrowers}</td>
+      <td class="mono">₹${fmtAmt(s.outstanding)}</td>
+      <td class="mono">₹${fmtAmt(s.todayRealizable)}</td>
+      <td class="mono">₹${fmtAmt(s.todayCollection)}</td>
+      <td class="mono">₹${fmtAmt(s.todayLoanAmt)}</td>
+      <td>${eodBadgeHtml(s)}</td>
+      <td><button class="btn-outline" onclick="viewBranchDashboard('${b.id}', ${JSON.stringify(esc(b.name))}, '${drilldownId}')">View Dashboard</button></td>
+    </tr>`;
+  });
+
+  return `
+    ${statCardsHtml(agg)}
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Branch-wise</h3></div>
+      <div class="panel-body">
+        <table><thead><tr><th>Branch</th><th>Borrower</th><th>Outstanding</th><th>Today Realizable</th><th>Today Collection</th><th>Today Loan</th><th>E.O.D</th><th></th></tr></thead>
+        <tbody>${rows}</tbody></table>
+      </div>
+    </div>
+    <div id="${drilldownId}"></div>
+  `;
+}
+async function renderAreaDashboard(){
+  const c = document.getElementById('content');
+  c.innerHTML = `<div class="panel"><div class="panel-body">Dashboard load ho raha hai...</div></div>`;
+  c.innerHTML = await buildAreaDashboardHtml(CURRENT_USER.areaId, 'branchDrilldown');
+}
+async function renderAreaBranches(){
+  const c = document.getElementById('content');
+  const branchSnap = await db.collection('branches').where('areaId','==', CURRENT_USER.areaId).get();
+  let rows = '';
+  branchSnap.forEach(doc=>{
+    const d = doc.data();
+    rows += `<tr><td><strong>${esc(d.name)}</strong></td><td>${esc(d.address||'—')}</td>
+      <td><button class="btn-outline" onclick="viewBranchDashboard('${doc.id}', ${JSON.stringify(esc(d.name))}, 'area')">View Dashboard</button></td></tr>`;
+  });
+  if(!rows) rows = `<tr class="empty-row"><td colspan="3">Abhi koi branch aapke area se link nahi hai.</td></tr>`;
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Aapki Linked Branches</h3></div>
+      <div class="panel-body"><table><thead><tr><th>Branch Naam</th><th>Address</th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    </div>
+    <div id="branchDrilldown"></div>`;
+}
+// Area/Head Office se kisi branch ka Dashboard drill-down me (read-only) dekhna.
+async function viewBranchDashboard(branchId, branchName, drilldownId){
+  const wrap = document.getElementById(drilldownId || 'branchDrilldown');
+  if(!wrap) return;
+  wrap.innerHTML = `<div class="panel" style="margin-top:18px;"><div class="panel-body">Branch dashboard load ho raha hai...</div></div>`;
+  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+  const html = await buildBranchDashboardHtml(branchId, true);
+  wrap.innerHTML = `<div class="panel" style="margin-top:18px;">
+    <div class="panel-head"><h3>${esc(branchName)} — Dashboard</h3><button class="btn-outline" onclick="document.getElementById('branchDrilldown').innerHTML=''">Band Karein</button></div>
+    <div class="panel-body">${html}</div>
+  </div>`;
+}
+
+/* =========================================================================
+   NOT SUBMIT — Head Office (globally, ya kisi ek Area Office ki dashboard se)
+   aur Area Head (apne area ke liye) dekh sakte hain: aaj kis branch ka E.O.D
+   submit nahi hua, aur us branch ke aaj (collectionDay = aaj) ke kaunse
+   group ka collection abhi tak Save nahi hua. Head Office yahan se seedha
+   us branch ki taraf se E.O.D bhi submit kar sakta hai (jo branch bhool gaya ho).
+   ========================================================================= */
+async function renderNotSubmit(areaId){
+  const c = document.getElementById('content');
+  c.innerHTML = `<div class="panel"><div class="panel-body">Load ho raha hai...</div></div>`;
+  const date = todayStr();
+  const day = dayNameForDate(date);
+
+  let branchQuery = db.collection('branches');
+  if(areaId) branchQuery = branchQuery.where('areaId','==', areaId);
+  const [branchSnap, areaSnap] = await Promise.all([ branchQuery.get(), db.collection('areaOffices').get() ]);
+  const areaMap = {}; areaSnap.forEach(d=> areaMap[d.id] = d.data().name);
+  const branches = branchSnap.docs.map(d=>({id:d.id, ...d.data()}));
+
+  if(branches.length === 0){
+    c.innerHTML = `<div class="panel"><div class="panel-body">Koi branch nahi mili.</div></div>`;
+    return;
+  }
+
+  const rowsData = await Promise.all(branches.map(async b=>{
+    const [groupSnap, staging, eodDoc] = await Promise.all([
+      db.collection('groups').where('branchId','==', b.id).get(),
+      loadStagingDoc(b.id, date),
+      loadEodDoc(b.id, date)
+    ]);
+    const todaysGroups = groupSnap.docs.filter(g => g.data().collectionDay === day).map(g=>({id:g.id, name:g.data().name}));
+    const savedSet = new Set((staging.savedGroups && staging.savedGroups.realizable) || []);
+    const missingGroups = todaysGroups.filter(g => !savedSet.has(g.id));
+    return { branch: b, todaysGroups, missingGroups, eodSubmitted: !!eodDoc };
+  }));
+
+  let rows = '';
+  rowsData.forEach(r=>{
+    const b = r.branch;
+    rows += `<tr>
+      <td><strong>${esc(b.name)}</strong></td>
+      <td>${b.areaId ? esc(areaMap[b.areaId]||'—') : '—'}</td>
+      <td>${r.eodSubmitted ? '<span class="badge" style="background:#DDEFE4;color:var(--green);">E.O.D Submit Ho Gaya</span>' : '<span class="badge" style="background:#FCE9D4;color:var(--amber);">E.O.D Submit Nahi Hua</span>'}</td>
+      <td>${r.todaysGroups.length === 0 ? '<span class="text-dim">Aaj koi group schedule nahi</span>' :
+            r.missingGroups.length === 0 ? '<span class="badge" style="background:#DDEFE4;color:var(--green);">Sabhi group save ho chuke</span>' :
+            r.missingGroups.map(g=>`<span class="badge" style="background:#FCE9D4;color:var(--amber);margin:2px;">${esc(g.name)}</span>`).join('')}</td>
+      <td>${(!r.eodSubmitted && CURRENT_USER.role==='headoffice') ? `<button class="btn-sm gold" onclick="hoSubmitEodForBranch('${b.id}', ${JSON.stringify(esc(b.name))})">Head Office se Submit Karein</button>` : (r.eodSubmitted ? '—' : '<span class="text-dim">Sirf Head Office submit kar sakta hai</span>')}</td>
+    </tr>`;
+  });
+
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Not Submit — ${esc(day)}, ${esc(date)}</h3></div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:12px;">Aaj ke collection day wale groups jinka Realizable collection abhi tak Save nahi hua, aur jin branches ka E.O.D abhi tak submit nahi hua, sab yahan dikhte hain.</div>
+        <table><thead><tr><th>Branch</th><th>Area Office</th><th>E.O.D Status</th><th>Group jinka EMI Submit Nahi Hua</th><th></th></tr></thead>
+        <tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
+}
+async function hoSubmitEodForBranch(branchId, branchName){
+  if(!confirm(`${branchName} ki taraf se Head Office E.O.D submit karega — confirm karein?`)) return;
+  try{
+    const totals = await finalizeEod(branchId, todayStr(), CURRENT_USER.name + ' (Head Office)');
+    toast(`${branchName} ka E.O.D Head Office ne submit kar diya — total ₹${fmtAmt(totals.total)}`);
+    renderNotSubmit(CURRENT_TAB === 'area-notsubmit' ? CURRENT_USER.areaId : null);
+  }catch(e){ toast(e.message, true); }
+}
+
+/* =========================================================================
+   BRANCH
+   ========================================================================= */
+async function renderBranchDashboard(){
+  const c = document.getElementById('content');
+  c.innerHTML = `<div class="panel"><div class="panel-body">Dashboard load ho raha hai...</div></div>`;
+  c.innerHTML = await buildBranchDashboardHtml(CURRENT_USER.branchId, false);
+}
+// branchId ka pura dashboard HTML banata hai — Branch (khud), Area/Head Office (drill-down, readOnly=true) sab isi ko use karte hain.
+async function buildBranchDashboardHtml(branchId, readOnly){
+  const [branchDoc, groupSnap, activeLoanSnap, monthLoanSnap, monthCollSnap, stats] = await Promise.all([
+    db.collection('branches').doc(branchId).get(),
+    db.collection('groups').where('branchId','==', branchId).get(),
+    db.collection('loans').where('branchId','==', branchId).where('status','==','active').get(),
+    db.collection('loans').where('branchId','==', branchId).where('createdDateStr','>=', monthStartStr()).get(),
+    db.collection('collections').where('branchId','==', branchId).where('date','>=', monthStartStr()).get(),
+    computeBranchStats(branchId)
+  ]);
+  const branchData = branchDoc.exists ? branchDoc.data() : {};
+  let overdueNo = 0, overdueAmt = 0, totalOverdueCustomers = 0;
+  const deathCustomers = [];
+  activeLoanSnap.forEach(doc=>{
+    const d = doc.data();
+    if(d.overdue && !d.deceased) totalOverdueCustomers++;
+    if(d.deceased) deathCustomers.push({ id: doc.id, ...d });
+  });
+  const todayCollSnap = await db.collection('collections').where('branchId','==', branchId).where('date','==', stats.date).where('type','==','overdue').get();
+  const seenOverdueLoans = new Set();
+  todayCollSnap.forEach(doc=>{
+    const d = doc.data();
+    if(!seenOverdueLoans.has(d.loanId)){ seenOverdueLoans.add(d.loanId); overdueNo++; overdueAmt += (d.putAmt||0); }
+  });
+  let monthlyPerformance = 0;
+  monthCollSnap.forEach(doc=> monthlyPerformance += (doc.data().putAmt || 0));
+
+  return `
+    ${statCardsHtml(stats)}
+    <div class="stat-row">
+      <div class="stat-card"><div class="label">Cash In Hand${branchData.cashInHandAsOf ? ' (as of '+esc(branchData.cashInHandAsOf)+')' : ''}</div><div class="val mono">₹${fmtAmt(branchData.cashInHand)}</div></div>
+      <div class="stat-card"><div class="label">Overdue No (Aaj)</div><div class="val">${overdueNo}</div></div>
+      <div class="stat-card"><div class="label">Overdue Amt (Aaj)</div><div class="val mono">₹${fmtAmt(overdueAmt)}</div></div>
+      <div class="stat-card"><div class="label">Total Overdue Customers</div><div class="val">${totalOverdueCustomers}</div></div>
+      <div class="stat-card"><div class="label">Loan No (Month)</div><div class="val">${monthLoanSnap.size}</div></div>
+      <div class="stat-card accent"><div class="label">Monthly Performance</div><div class="val mono">₹${fmtAmt(monthlyPerformance)}</div></div>
+    </div>
+    <div class="panel"><div class="panel-body">
+      Total Group: <strong>${stats.totalGroups}</strong>. Aaj ka din: <strong>${stats.day}</strong> — aaj ${stats.todaysGroupCount} group ka collection due hai, jisme se ${stats.groupsSavedToday} group abhi tak save ho chuka hai.
+      ${eodBadgeHtml(stats)}
+    </div></div>
+    <div class="panel" style="margin-top:18px;">
+      <div class="panel-head"><h3>Death Customer</h3>${readOnly ? '' : '<button class="btn-sm gold" onclick="openDeathRegisterSearch()">+ Death Register Karein</button>'}</div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:12px;">Jis bhi customer ki death register hogi, wo turant Realizable/Advance/Overdue list se hat jayega. Outstanding tab tak branch me dikhta rahega jab tak Head Office "Settlement" na kare.</div>
+        ${deathCustomers.length === 0 ? '<div class="empty-row" style="padding:12px 0;color:var(--text-dim);">Is branch me koi death-registered customer nahi hai.</div>' : `
+        <table><thead><tr><th>Borrower</th><th>PH No</th><th>Outstanding</th><th>Death Date</th><th>Settlement Status</th></tr></thead>
+        <tbody>${deathCustomers.map(d => `<tr><td><strong>${esc(d.customerName)}</strong></td><td class="mono">${esc(d.phone||'—')}</td>
+          <td class="mono">₹${fmtAmt(d.outstanding)}</td><td>${esc(d.deceasedAt||'—')}</td>
+          <td>${d.settled ? '<span class="badge" style="background:#DDEFE4;color:var(--green);">Settled</span>' : '<span class="badge" style="background:#FCE9D4;color:var(--amber);">Head Office Settlement Pending</span>'}</td></tr>`).join('')}</tbody></table>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+
+/* =========================================================================
+   E.O.D (End Of Day) — jo bhi collection Realizable/Advance/Overdue me
+   "Save" hua tha (staging document me), wo yahan Submit karne par hi
+   database (loans outstanding + collections history) me final hota hai.
+   ========================================================================= */
+async function renderBranchEod(){
+  const c = document.getElementById('content');
+  c.innerHTML = `<div class="panel"><div class="panel-body">Load ho raha hai...</div></div>`;
+  const branchId = CURRENT_USER.branchId;
+  const date = todayStr();
+  const day = dayNameForDate(date);
+  const [groupSnap, staging, eodDoc] = await Promise.all([
+    db.collection('groups').where('branchId','==', branchId).get(),
+    loadStagingDoc(branchId, date),
+    loadEodDoc(branchId, date)
+  ]);
+  const todaysGroups = groupSnap.docs.filter(g => g.data().collectionDay === day).map(g=>({id:g.id,name:g.data().name}));
+  const savedSet = new Set((staging.savedGroups && staging.savedGroups.realizable) || []);
+  const totals = stagingTotals(staging);
+
+  if(eodDoc){
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-head"><h3>E.O.D — ${esc(day)}, ${esc(date)}</h3><span class="badge" style="background:#DDEFE4;color:var(--green);">Submit Ho Chuka Hai</span></div>
+        <div class="panel-body">
+          <div class="helper" style="margin-bottom:12px;">Submitted by <strong>${esc(eodDoc.submittedBy)}</strong> — ${new Date(eodDoc.submittedAt).toLocaleString('en-IN')}</div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="label">Realizable Collection</div><div class="val mono">₹${fmtAmt(eodDoc.totals.realizable)}</div></div>
+            <div class="stat-card"><div class="label">Advance Collection</div><div class="val mono">₹${fmtAmt(eodDoc.totals.advance)}</div></div>
+            <div class="stat-card"><div class="label">Overdue Collection</div><div class="val mono">₹${fmtAmt(eodDoc.totals.overdue)}</div></div>
+            <div class="stat-card accent"><div class="label">Total Collection</div><div class="val mono">₹${fmtAmt(eodDoc.totals.total)}</div></div>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>E.O.D — ${esc(day)}, ${esc(date)}</h3><span class="badge" style="background:#FCE9D4;color:var(--amber);">Abhi Submit Nahi Hua</span></div>
+      <div class="panel-body">
+        <div class="helper" style="margin-bottom:12px;">Realizable / Advance / Overdue me jo bhi "Save" kiya gaya hai, uska total yahan dikh raha hai. Submit karte hi ye data final ho kar loan outstanding se minus ho jayega — Submit karne ke baad edit nahi ho sakta.</div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="label">Realizable (Saved)</div><div class="val mono">₹${fmtAmt(totals.realizable)}</div></div>
+          <div class="stat-card"><div class="label">Advance (Saved)</div><div class="val mono">₹${fmtAmt(totals.advance)}</div></div>
+          <div class="stat-card"><div class="label">Overdue (Saved)</div><div class="val mono">₹${fmtAmt(totals.overdue)}</div></div>
+          <div class="stat-card accent"><div class="label">Total Collection</div><div class="val mono">₹${fmtAmt(totals.total)}</div></div>
+        </div>
+        <h3 style="font-size:14px;color:var(--navy);margin:18px 0 10px;">Aaj ke Group (${esc(day)})</h3>
+        ${todaysGroups.length === 0 ? '<div class="empty-row" style="padding:10px 0;color:var(--text-dim);">Aaj koi group schedule nahi hai.</div>' :
+          todaysGroups.map(g => savedSet.has(g.id)
+            ? `<span class="badge" style="background:#DDEFE4;color:var(--green);margin:3px;">${esc(g.name)} — Saved</span>`
+            : `<span class="badge" style="background:#FCE9D4;color:var(--amber);margin:3px;">${esc(g.name)} — Save Nahi Hua</span>`).join('')}
+        <div style="margin-top:20px;"><button class="btn-sm gold" onclick="submitBranchEod()">E.O.D Submit Karein</button></div>
+      </div>
+    </div>`;
+}
+async function submitBranchEod(){
+  if(!confirm('E.O.D submit karne ke baad aaj ka collection data database me final ho jayega aur edit nahi ho payega. Confirm karein?')) return;
+  try{
+    const totals = await finalizeEod(CURRENT_USER.branchId, todayStr());
+    toast('E.O.D submit ho gaya — Total Collection ₹' + fmtAmt(totals.total));
+    renderBranchEod();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Group ----
+async function renderBranchGroup(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Group</h3><button class="btn-sm gold" onclick="openGroupForm()">+ Naya Group</button></div>
+      <div class="panel-body">
+        <table><thead><tr><th>Group Naam</th><th>Address</th><th>Collection Day</th><th></th></tr></thead>
+        <tbody id="groupTableBody"><tr class="empty-row"><td colspan="4">Load ho raha hai...</td></tr></tbody></table>
+      </div>
+    </div>`;
+  const snap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).get();
+  if(snap.empty){
+    document.getElementById('groupTableBody').innerHTML = `<tr class="empty-row"><td colspan="4">Abhi tak koi group nahi bana.</td></tr>`;
+    return;
+  }
+  let rows = '';
+  snap.forEach(doc=>{
+    const d = doc.data();
+    const dayShown = d.collectionDay ? esc(d.collectionDay) : '<span style="color:var(--amber);">Set Nahi Hai</span>';
+    rows += `<tr><td><strong>${esc(d.name)}</strong></td><td>${esc(d.address||'—')}</td><td>${dayShown}</td>
+      <td><button class="btn-outline" onclick='openGroupForm(${JSON.stringify(doc.id)}, ${JSON.stringify(d.name)}, ${JSON.stringify(d.address||'')}, ${JSON.stringify(d.collectionDay||'')})'>Edit</button></td></tr>`;
+  });
+  document.getElementById('groupTableBody').innerHTML = rows;
+}
+function openGroupForm(groupId, name, address, collectionDay){
+  let dayOptions = '<option value="">— Select Nahi Kiya —</option>';
+  DAYS.forEach(d => dayOptions += `<option value="${d}" ${d===collectionDay?'selected':''}>${d}</option>`);
+  openModal(`
+    <h3>${groupId ? 'Group Edit Karein' : 'Naya Group'}</h3>
+    <div class="field"><label>Group Naam</label><input id="gf_name" value="${esc(name||'')}"></div>
+    <div class="field"><label>Group Address</label><input id="gf_address" value="${esc(address||'')}"></div>
+    <div class="field"><label>Collection Day</label><select id="gf_day">${dayOptions}</select></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick='saveGroup(${groupId ? JSON.stringify(groupId) : "null"})'>Save</button>
+    </div>
+  `);
+}
+async function saveGroup(groupId){
+  const name = document.getElementById('gf_name').value.trim();
+  const address = document.getElementById('gf_address').value.trim();
+  const collectionDay = document.getElementById('gf_day').value;
+  if(!name){ toast('Group naam dalein', true); return; }
+  try{
+    if(groupId){
+      await db.collection('groups').doc(groupId).update({ name, address, collectionDay });
+      closeModal(); toast('Group update ho gaya'); renderBranchGroup();
+    }else{
+      await db.collection('groups').add({
+        name, address, collectionDay, branchId: CURRENT_USER.branchId, createdAt: Date.now()
+      });
+      closeModal(); toast('Group ban gaya'); renderBranchGroup();
+    }
+  }catch(e){ toast(e.message, true); }
+}
+
+/* =========================================================================
+   LOAN — Create/Disbursed Loan & Loan Closer
+   (Customer ka alag concept ab nahi hai — borrower ki poori detail seedhe
+   yahi ek form se "loans" collection me save ho jaati hai)
+   ========================================================================= */
+let LOAN_MODE = 'create';
+
+function renderBranchLoan(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Loan Create / Disbursed Loan</h3>
+        <div>
+          <button class="btn-outline" id="loanModeCreate" onclick="setLoanMode('create')" style="margin-right:8px;">Create / Disbursed Loan</button>
+          <button class="btn-outline" id="loanModeCloser" onclick="setLoanMode('closer')" style="margin-right:8px;">Loan Closer</button>
+          <button class="btn-outline" id="loanModeUpdate" onclick="setLoanMode('update')">Update Details</button>
+        </div>
+      </div>
+      <div class="panel-body" id="loanBody"></div>
+    </div>`;
+  setLoanMode(LOAN_MODE);
+}
+function setLoanMode(mode){
+  LOAN_MODE = mode;
+  document.getElementById('loanModeCreate').className = mode==='create' ? 'btn-sm gold' : 'btn-outline';
+  document.getElementById('loanModeCloser').className = mode==='closer' ? 'btn-sm gold' : 'btn-outline';
+  document.getElementById('loanModeUpdate').className = mode==='update' ? 'btn-sm gold' : 'btn-outline';
+  if(mode === 'create') renderLoanCreateForm();
+  else if(mode === 'closer') renderLoanCloserSearch();
+  else renderLoanUpdateBrowse();
+}
+
+// ---- helper: find an active loan/borrower in this branch by phone / aadhaar / pan ----
+async function findActiveLoanByAny(term){
+  const branchId = CURRENT_USER.branchId;
+  const fields = ['phone','altPhone','aadhaar','pan'];
+  for(const f of fields){
+    const snap = await db.collection('loans').where('branchId','==',branchId).where(f,'==',term).where('status','==','active').limit(1).get();
+    if(!snap.empty && !snap.docs[0].data().deceased) return { id: snap.docs[0].id, data: snap.docs[0].data() };
+  }
+  return null;
+}
+
+// ---- Death Customer registration (Branch) ----
+function openDeathRegisterSearch(){
+  openModal(`
+    <h3>Death Register Karein</h3>
+    <div class="field"><label>Borrower Search (Phone / Aadhaar / PAN)</label><input id="death_search_term"></div>
+    <button class="btn-sm gold" onclick="doDeathSearch()">Search</button>
+    <div id="deathSearchResultWrap" style="margin-top:14px;"></div>
+  `);
+}
+async function doDeathSearch(){
+  const term = document.getElementById('death_search_term').value.trim();
+  const wrap = document.getElementById('deathSearchResultWrap');
+  if(!term){ toast('Kuch dalke search karein', true); return; }
+  const found = await findActiveLoanByAny(term);
+  if(!found){ toast('Borrower nahi mila ya loan active nahi hai', true); wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `
+    <div class="form-grid">
+      <div class="field"><label>Borrower Naam</label><input value="${esc(found.data.customerName)}" disabled></div>
+      <div class="field"><label>Outstanding</label><input value="₹${fmtAmt(found.data.outstanding)}" disabled></div>
+      <div class="field"><label>Death Date</label><input type="date" id="death_date" value="${todayStr()}"></div>
+      <div class="field full"><label>Remarks (Optional)</label><input id="death_remarks"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveDeathRegister('${found.id}')">Death Register Karein</button>
+    </div>
+  `;
+}
+async function saveDeathRegister(loanId){
+  const deathDate = document.getElementById('death_date').value;
+  const remarks = document.getElementById('death_remarks').value.trim();
+  if(!deathDate){ toast('Death Date select karein', true); return; }
+  try{
+    await db.collection('loans').doc(loanId).update({
+      deceased: true, deceasedAt: deathDate, deceasedRemarks: remarks, settled: false
+    });
+    closeModal();
+    toast('Death register ho gaya — customer collection list se hat gaya');
+    renderBranchDashboard();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Update Details (fill blank/missing fields — e.g. after bulk Excel import) ----
+async function renderLoanUpdateBrowse(){
+  const wrap = document.getElementById('loanBody');
+  const groupSnap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).get();
+  if(groupSnap.empty){
+    wrap.innerHTML = `<div class="helper">Abhi tak koi Group nahi hai.</div>`;
+    return;
+  }
+  let options = '<option value="">— Group Select Karein —</option>';
+  groupSnap.forEach(doc => options += `<option value="${doc.id}">${esc(doc.data().name)} ${doc.data().collectionDay ? '('+esc(doc.data().collectionDay)+')' : '(Din Set Nahi)'}</option>`);
+  wrap.innerHTML = `
+    <div class="field"><label>Group</label><select id="upd_group" onchange="loadUpdateLoansList()">${options}</select></div>
+    <div id="updateListWrap" style="margin-top:16px;"></div>
+  `;
+}
+async function loadUpdateLoansList(){
+  const groupId = document.getElementById('upd_group').value;
+  const wrap = document.getElementById('updateListWrap');
+  if(!groupId){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = 'Load ho raha hai...';
+  const snap = await db.collection('loans').where('branchId','==', CURRENT_USER.branchId).where('groupId','==', groupId).where('status','==','active').get();
+  if(snap.empty){ wrap.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--text-dim);">Is group me koi active borrower nahi hai.</div>`; return; }
+  let rows = '';
+  snap.forEach(doc=>{
+    const d = doc.data();
+    rows += `<tr><td><strong>${esc(d.customerName)}</strong></td><td class="mono">${esc(d.phone||'—')}</td>
+      <td class="mono">₹${fmtAmt(d.loanAmt)}</td><td class="mono">₹${fmtAmt(d.outstanding)}</td>
+      <td>${esc(d.remarks||'—')}</td>
+      <td><button class="btn-outline" onclick="openLoanEditForm('${doc.id}')">Edit</button></td></tr>`;
+  });
+  wrap.innerHTML = `<table><thead><tr><th>Borrower</th><th>PH No</th><th>Loan Amt</th><th>Outstanding</th><th>Remarks</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+async function openLoanEditForm(loanId){
+  const doc = await db.collection('loans').doc(loanId).get();
+  const d = doc.data();
+  openModal(`
+    <h3>Borrower / Loan Details Update Karein</h3>
+    <div class="form-grid">
+      <div class="field"><label>Borrower Naam</label><input id="ef_name" value="${esc(d.customerName||'')}"></div>
+      <div class="field"><label>D.O.B</label><input type="date" id="ef_dob" value="${esc(d.customerDob||'')}"></div>
+      <div class="field"><label>PH No (Mandatory)</label><input id="ef_phone" value="${esc(d.phone||'')}"></div>
+      <div class="field"><label>PH No (Optional)</label><input id="ef_altphone" value="${esc(d.altPhone||'')}"></div>
+      <div class="field full"><label>Address</label><input id="ef_address" value="${esc(d.address||'')}"></div>
+      <div class="field"><label>Aadhar No</label><input id="ef_aadhaar" value="${esc(d.aadhaar||'')}"></div>
+      <div class="field"><label>Pan Card No</label><input id="ef_pan" value="${esc(d.pan||'')}"></div>
+      <div class="field"><label>Bank A/C No</label><input id="ef_bankacc" value="${esc(d.bankAccNo||'')}"></div>
+      <div class="field"><label>IFSC Code</label><input id="ef_ifsc" value="${esc(d.ifsc||'')}"></div>
+      <div class="field"><label>Loan Amt</label><input type="number" id="ef_loanAmt" value="${d.loanAmt||''}" oninput="loanEditCalcChanged()"></div>
+      <div class="field"><label>Interest Rate (%)</label><input type="number" id="ef_interestRate" value="${d.interestRate||''}" oninput="loanEditCalcChanged()"></div>
+      <div class="field"><label>File Charge (%)</label><input type="number" id="ef_fileChargePct" value="${d.fileChargePct||''}" oninput="loanEditCalcChanged()"></div>
+      <div class="field"><label>EMI No</label><input type="number" id="ef_emiNo" value="${d.tenureWeeks||''}" oninput="loanEditCalcChanged()"></div>
+      <div class="field"><label>Emi Amt (Autometic)</label><input id="ef_emiShow" value="${d.emiAmt ? '₹'+fmtAmt(d.emiAmt) : ''}" disabled></div>
+      <div class="field"><label>Outstanding (jab tak recalc na ho, edit na karein)</label><input type="number" id="ef_outstanding" value="${d.outstanding||''}"></div>
+      <div class="field"><label>Co Applicant Naam</label><input id="ef_coname" value="${esc(d.coApplicantName||'')}"></div>
+      <div class="field"><label>Co Applicant D.O.B</label><input type="date" id="ef_codob" value="${esc(d.coApplicantDob||'')}"></div>
+      <div class="field full"><label>Remarks</label><input id="ef_remarks" value="${esc(d.remarks||'')}"></div>
+      <div class="field"><label>Overdue</label>
+        <select id="ef_overdue">
+          <option value="no" ${!d.overdue?'selected':''}>Nahi</option>
+          <option value="yes" ${d.overdue?'selected':''}>Haan — Overdue Section me dikhayein</option>
+        </select>
+      </div>
+    </div>
+    <div class="helper">Interest Rate / File Charge / EMI No bharne par Emi Amt khud calculate ho jayega — outstanding usi hisaab se recalc karke daal dein agar zaroorat ho.</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm gold" onclick="saveLoanEdit('${loanId}')">Save</button>
+    </div>
+  `);
+}
+function loanEditCalcChanged(){
+  const loanAmt = parseFloat(document.getElementById('ef_loanAmt').value) || 0;
+  const interestRate = parseFloat(document.getElementById('ef_interestRate').value) || 0;
+  const fileChargePct = parseFloat(document.getElementById('ef_fileChargePct').value) || 0;
+  const emiNo = parseInt(document.getElementById('ef_emiNo').value) || 0;
+  if(loanAmt <= 0 || emiNo <= 0){ document.getElementById('ef_emiShow').value = ''; return; }
+  const t = calcLoanTerms(loanAmt, interestRate, fileChargePct, emiNo);
+  document.getElementById('ef_emiShow').value = '₹' + fmtAmt(t.emiAmt);
+}
+async function saveLoanEdit(loanId){
+  const name = document.getElementById('ef_name').value.trim();
+  const phone = document.getElementById('ef_phone').value.trim();
+  if(!name){ toast('Borrower naam dalein', true); return; }
+  if(!phone){ toast('PH No (Mandatory) dalein', true); return; }
+  const loanAmt = parseFloat(document.getElementById('ef_loanAmt').value) || 0;
+  const interestRate = parseFloat(document.getElementById('ef_interestRate').value) || 0;
+  const fileChargePct = parseFloat(document.getElementById('ef_fileChargePct').value) || 0;
+  const emiNo = parseInt(document.getElementById('ef_emiNo').value) || 0;
+  const update = {
+    customerName: name,
+    customerDob: document.getElementById('ef_dob').value,
+    phone,
+    altPhone: document.getElementById('ef_altphone').value.trim(),
+    address: document.getElementById('ef_address').value.trim(),
+    aadhaar: document.getElementById('ef_aadhaar').value.trim(),
+    pan: document.getElementById('ef_pan').value.trim(),
+    bankAccNo: document.getElementById('ef_bankacc').value.trim(),
+    ifsc: document.getElementById('ef_ifsc').value.trim(),
+    loanAmt,
+    outstanding: parseFloat(document.getElementById('ef_outstanding').value) || 0,
+    coApplicantName: document.getElementById('ef_coname').value.trim(),
+    coApplicantDob: document.getElementById('ef_codob').value,
+    remarks: document.getElementById('ef_remarks').value.trim(),
+    overdue: document.getElementById('ef_overdue').value === 'yes'
+  };
+  if(loanAmt > 0 && emiNo > 0){
+    const t = calcLoanTerms(loanAmt, interestRate, fileChargePct, emiNo);
+    update.interestRate = interestRate;
+    update.interestAmt = t.interest;
+    update.fileChargePct = fileChargePct;
+    update.fileCharge = t.fileCharge;
+    update.emiAmt = t.emiAmt;
+    update.lastEmiAmt = t.lastEmiAmt;
+    update.tenureWeeks = emiNo;
+  }
+  try{
+    await db.collection('loans').doc(loanId).update(update);
+    closeModal(); toast('Details update ho gayi'); loadUpdateLoansList();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Create / Disbursed Loan (borrower + loan in one step) ----
+async function renderLoanCreateForm(){
+  const wrap = document.getElementById('loanBody');
+  let dayOptions = '<option value="">— Din Select Karein —</option>';
+  DAYS.forEach(d => dayOptions += `<option value="${d}">${d}</option>`);
+  wrap.innerHTML = `
+    <div class="form-grid">
+      <div class="field"><label>Collection Day</label><select id="lf_day" onchange="loanDayChanged()">${dayOptions}</select></div>
+      <div class="field"><label>Group Name</label><select id="lf_group" disabled><option value="">— Pehle Din Select Karein —</option></select></div>
+      <div class="field"><label>Borrower Naam</label><input id="lf_name"></div>
+      <div class="field"><label>D.O.B (Borrower — Age 18 se 58 tak)</label><input type="date" id="lf_dob"></div>
+      <div class="field"><label>PH No (Mandatory)</label><input id="lf_phone"></div>
+      <div class="field"><label>PH No (Optional)</label><input id="lf_altphone"></div>
+      <div class="field full"><label>Address</label><input id="lf_address"></div>
+      <div class="field"><label>Aadhar No</label><input id="lf_aadhaar"></div>
+      <div class="field"><label>Pan Card No</label><input id="lf_pan"></div>
+      <div class="field"><label>Bank A/C No</label><input id="lf_bankacc"></div>
+      <div class="field"><label>IFSC Code</label><input id="lf_ifsc"></div>
+      <div class="field"><label>Loan Amt</label><input type="number" id="lf_loanAmt" oninput="loanCalcChanged()"></div>
+      <div class="field"><label>Interest Rate (%)</label><input type="number" id="lf_interestRate" oninput="loanCalcChanged()"></div>
+      <div class="field"><label>File Charge (%)</label><input type="number" id="lf_fileChargePct" oninput="loanCalcChanged()"></div>
+      <div class="field"><label>EMI No</label><input type="number" id="lf_emiNo" oninput="loanCalcChanged()"></div>
+      <div class="field"><label>Emi Amt (Autometic)</label><input id="lf_emiShow" disabled></div>
+      <div class="field"><label>Last Installment (Autometic)</label><input id="lf_lastEmiShow" disabled></div>
+      <div class="field"><label>File Charge Amt (Autometic)</label><input id="lf_fileChargeShow" disabled></div>
+      <div class="field"><label>Co Applicant Naam</label><input id="lf_coname"></div>
+      <div class="field"><label>Co Applicant D.O.B (Age 21 se 58 tak)</label><input type="date" id="lf_codob"></div>
+      <div class="field full"><label>Remarks</label><input id="lf_remarks"></div>
+    </div>
+    <button class="btn-sm gold" style="margin-top:16px;" onclick="saveLoan()">Submit</button>
+  `;
+  window._groupDayMap = {};
+}
+async function loanDayChanged(){
+  const day = document.getElementById('lf_day').value;
+  const groupSelect = document.getElementById('lf_group');
+  if(!day){ groupSelect.disabled = true; groupSelect.innerHTML = '<option value="">— Pehle Din Select Karein —</option>'; return; }
+  groupSelect.disabled = false;
+  groupSelect.innerHTML = '<option value="">Load ho raha hai...</option>';
+  const snap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).where('collectionDay','==', day).get();
+  if(snap.empty){ groupSelect.innerHTML = '<option value="">Is din ke liye koi group nahi hai</option>'; return; }
+  let options = '<option value="">— Group Select Karein —</option>';
+  snap.forEach(doc => options += `<option value="${doc.id}">${esc(doc.data().name)}</option>`);
+  groupSelect.innerHTML = options;
+}
+function loanCalcChanged(){
+  const loanAmt = parseFloat(document.getElementById('lf_loanAmt').value) || 0;
+  const interestRate = parseFloat(document.getElementById('lf_interestRate').value) || 0;
+  const fileChargePct = parseFloat(document.getElementById('lf_fileChargePct').value) || 0;
+  const emiNo = parseInt(document.getElementById('lf_emiNo').value) || 0;
+  if(loanAmt <= 0 || emiNo <= 0){
+    document.getElementById('lf_emiShow').value = '';
+    document.getElementById('lf_lastEmiShow').value = '';
+    document.getElementById('lf_fileChargeShow').value = '';
+    return;
+  }
+  const t = calcLoanTerms(loanAmt, interestRate, fileChargePct, emiNo);
+  document.getElementById('lf_emiShow').value = '₹' + fmtAmt(t.emiAmt);
+  document.getElementById('lf_lastEmiShow').value = '₹' + fmtAmt(t.lastEmiAmt);
+  document.getElementById('lf_fileChargeShow').value = '₹' + fmtAmt(t.fileCharge);
+}
+async function saveLoan(){
+  const groupId = document.getElementById('lf_group').value;
+  const day = document.getElementById('lf_day').value;
+  const name = document.getElementById('lf_name').value.trim();
+  const dob = document.getElementById('lf_dob').value;
+  const phone = document.getElementById('lf_phone').value.trim();
+  const altPhone = document.getElementById('lf_altphone').value.trim();
+  const address = document.getElementById('lf_address').value.trim();
+  const aadhaar = document.getElementById('lf_aadhaar').value.trim();
+  const pan = document.getElementById('lf_pan').value.trim();
+  const bankAccNo = document.getElementById('lf_bankacc').value.trim();
+  const ifsc = document.getElementById('lf_ifsc').value.trim();
+  const loanAmt = parseFloat(document.getElementById('lf_loanAmt').value) || 0;
+  const interestRate = parseFloat(document.getElementById('lf_interestRate').value) || 0;
+  const fileChargePct = parseFloat(document.getElementById('lf_fileChargePct').value) || 0;
+  const emiNo = parseInt(document.getElementById('lf_emiNo').value) || 0;
+  const coApplicantName = document.getElementById('lf_coname').value.trim();
+  const coApplicantDob = document.getElementById('lf_codob').value;
+  const remarks = document.getElementById('lf_remarks').value.trim();
+
+  if(!day){ toast('Collection Day select karein', true); return; }
+  if(!groupId){ toast('Group select karein', true); return; }
+  if(!name){ toast('Borrower naam dalein', true); return; }
+  if(!dob){ toast('Borrower D.O.B dalein', true); return; }
+  if(!phone){ toast('PH No (Mandatory) dalein', true); return; }
+  if(loanAmt <= 0){ toast('Loan Amt sahi se dalein', true); return; }
+  if(emiNo <= 0){ toast('EMI No sahi se dalein', true); return; }
+
+  const disbDate = todayStr();
+  const age = calcAge(dob, disbDate);
+  if(age === null || age < 18 || age > 58){ toast('Borrower ki age 18 se 58 saal ke beech honi chahiye', true); return; }
+  if(coApplicantName || coApplicantDob){
+    if(!coApplicantDob){ toast('Co Applicant D.O.B dalein', true); return; }
+    const coAge = calcAge(coApplicantDob, disbDate);
+    if(coAge === null || coAge < 21 || coAge > 58){ toast('Co Applicant ki age 21 se 58 saal ke beech honi chahiye', true); return; }
+  }
+
+  const t = calcLoanTerms(loanAmt, interestRate, fileChargePct, emiNo);
+  try{
+    await db.collection('loans').add({
+      groupId, branchId: CURRENT_USER.branchId, collectionDay: day,
+      customerName: name, customerDob: dob, phone, altPhone, address, aadhaar, pan,
+      bankAccNo, ifsc,
+      loanAmt, interestRate, interestAmt: t.interest, fileChargePct, fileCharge: t.fileCharge,
+      emiAmt: t.emiAmt, lastEmiAmt: t.lastEmiAmt, tenureWeeks: emiNo,
+      outstanding: t.totalPayable, emisPaid: 0,
+      coApplicantName, coApplicantDob, remarks,
+      overdue: false, deceased: false, settled: false,
+      status: 'active', disbDate, createdDateStr: disbDate, createdAt: Date.now()
+    });
+    toast('Borrower/Loan save ho gaya! Disb date ke agle din se collection me aayega.');
+    renderLoanCreateForm();
+  }catch(e){ toast(e.message, true); }
+}
+
+// ---- Loan Closer ----
+function renderLoanCloserSearch(){
+  document.getElementById('loanBody').innerHTML = `
+    <div class="field"><label>Borrower Search (Phone / Aadhaar / PAN)</label>
+      <input id="closerSearchTerm" placeholder="Number dalein aur search karein">
+    </div>
+    <button class="btn-sm gold" onclick="doLoanCloserSearch()">Search</button>
+    <div id="loanCloserFormWrap" style="margin-top:18px;"></div>
+  `;
+}
+async function doLoanCloserSearch(){
+  const term = document.getElementById('closerSearchTerm').value.trim();
+  if(!term){ toast('Kuch dalke search karein', true); return; }
+  const found = await findActiveLoanByAny(term);
+  if(!found){ toast('Borrower nahi mila ya loan active nahi hai', true); document.getElementById('loanCloserFormWrap').innerHTML=''; return; }
+  document.getElementById('loanCloserFormWrap').innerHTML = `
+    <div class="form-grid">
+      <div class="field"><label>Borrower Naam</label><input value="${esc(found.data.customerName)}" disabled></div>
+      <div class="field"><label>Outstanding</label><input value="₹${fmtAmt(found.data.outstanding)}" disabled></div>
+      <div class="field full"><label>Put Amt</label><input type="number" id="closer_putamt"></div>
+    </div>
+    <button class="btn-sm gold" style="margin-top:14px;" onclick="saveLoanCloser('${found.id}')">Submit</button>
+  `;
+}
+async function saveLoanCloser(loanId){
+  const putAmt = parseFloat(document.getElementById('closer_putamt').value) || 0;
+  if(putAmt <= 0){ toast('Put Amt sahi se dalein', true); return; }
+  try{
+    const loanRef = db.collection('loans').doc(loanId);
+    const loanDoc = await loanRef.get();
+    const d = loanDoc.data();
+    const newOutstanding = Math.max(0, (d.outstanding||0) - putAmt);
+    const batch = db.batch();
+    batch.update(loanRef, { outstanding: newOutstanding, status: newOutstanding <= 0 ? 'closed' : 'active' });
+    const collRef = db.collection('collections').doc();
+    batch.set(collRef, {
+      loanId, groupId: d.groupId, branchId: CURRENT_USER.branchId,
+      date: todayStr(), type: 'loanclosure', emiAmt: d.emiAmt||0, putAmt, createdAt: Date.now()
+    });
+    await batch.commit();
+    toast(newOutstanding <= 0 ? 'Loan poora band ho gaya!' : 'Payment record ho gaya, balance update ho gaya');
+    renderLoanCloserSearch();
+  }catch(e){ toast(e.message, true); }
+}
+
+/* =========================================================================
+   COLLECTION — Realizable / Advance / Overdue
+   ========================================================================= */
+let COLLECTION_TYPE = null;
+
+function renderBranchCollection(){
+  const c = document.getElementById('content');
+  c.innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h3>Collection</h3></div>
+      <div class="panel-body">
+        <button class="btn-outline" id="collBtn-realizable" onclick="selectCollectionType('realizable')" style="margin-right:8px;">Realizable</button>
+        <button class="btn-outline" id="collBtn-advance" onclick="selectCollectionType('advance')" style="margin-right:8px;">Advance</button>
+        <button class="btn-outline" id="collBtn-overdue" onclick="selectCollectionType('overdue')">Overdue</button>
+        <div id="collectionArea" style="margin-top:18px;"></div>
+      </div>
+    </div>`;
+}
+
+// ---- Realizable: aaj (today) ka din fixed hai, dropdown me sirf aaj ke groups ----
+// ---- Advance: pehle Day select karo (sabhi din), fir us din ke groups ----
+// ---- Overdue: seedha Group select karo (sabhi group), us group ke overdue borrower ----
+async function selectCollectionType(type){
+  COLLECTION_TYPE = type;
+  ['realizable','advance','overdue'].forEach(t=>{
+    document.getElementById('collBtn-'+t).className = (t===type) ? 'btn-sm gold' : 'btn-outline';
+  });
+  const area = document.getElementById('collectionArea');
+
+  if(type === 'realizable'){
+    const today = todayDayName();
+    area.innerHTML = `<div class="field"><label>Aaj (${esc(today)}) ke Group</label><select id="collGroupSelect" onchange="loadCollectionCustomers()"><option>Load ho raha hai...</option></select></div>
+      <div id="collectionTableWrap" style="margin-top:16px;"></div>`;
+    const groupSnap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).get();
+    const groups = groupSnap.docs.map(d=>({id:d.id, ...d.data()})).filter(g => g.collectionDay === today);
+    fillGroupSelect(groups, today);
+    return;
+  }
+
+  if(type === 'advance'){
+    let dayOptions = '<option value="">— Day Select Karein —</option>';
+    ALL_DAYS.forEach(d => dayOptions += `<option value="${d}">${d}</option>`);
+    area.innerHTML = `
+      <div class="field"><label>Day</label><select id="advDaySelect" onchange="advanceDayChanged()">${dayOptions}</select></div>
+      <div class="field" id="advGroupWrap" style="display:none;"><label>Group</label><select id="collGroupSelect" onchange="loadCollectionCustomers()"></select></div>
+      <div id="collectionTableWrap" style="margin-top:16px;"></div>`;
+    return;
+  }
+
+  // overdue: seedha group dropdown, sabhi group (kisi bhi din ka)
+  area.innerHTML = `<div class="field"><label>Group</label><select id="collGroupSelect" onchange="loadCollectionCustomers()"><option>Load ho raha hai...</option></select></div>
+    <div id="collectionTableWrap" style="margin-top:16px;"></div>`;
+  const groupSnap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).get();
+  const groups = groupSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  fillGroupSelect(groups);
+}
+function fillGroupSelect(groups, dayLabel){
+  const sel = document.getElementById('collGroupSelect');
+  if(!sel) return;
+  if(groups.length === 0){
+    sel.innerHTML = '<option value="">— Koi Group Nahi Mila —</option>';
+    document.getElementById('collectionTableWrap').innerHTML = `<div class="empty-row" style="padding:20px;color:var(--text-dim);">
+      ${dayLabel ? 'Aaj (' + esc(dayLabel) + ') ke liye koi group schedule nahi hai.' : 'Koi group nahi mila.'}</div>`;
+    return;
+  }
+  let options = '<option value="">— Group Select Karein —</option>';
+  groups.forEach(g => options += `<option value="${g.id}">${esc(g.name)} (${esc(g.collectionDay||'—')})</option>`);
+  sel.innerHTML = options;
+}
+async function advanceDayChanged(){
+  const day = document.getElementById('advDaySelect').value;
+  const wrap = document.getElementById('advGroupWrap');
+  document.getElementById('collectionTableWrap').innerHTML = '';
+  if(!day){ wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  document.getElementById('collGroupSelect').innerHTML = '<option>Load ho raha hai...</option>';
+  const groupSnap = await db.collection('groups').where('branchId','==', CURRENT_USER.branchId).get();
+  const groups = groupSnap.docs.map(d=>({id:d.id, ...d.data()})).filter(g => g.collectionDay === day);
+  fillGroupSelect(groups, day);
+}
+
+// ---- Ek hi row-renderer teeno type (realizable/advance/overdue) ke liye ----
+// Tick box default ON: Put Amt = Emi Amt (disabled). Tick hatane par Put Amt editable
+// hota hai, par Emi Amt se zyada nahi likh sakte, kam likh sakte hain.
+function collectionRowHtml(sl, groupName, day, d, loanId, dueAmt, isLastEmi){
+  return `<tr data-loanid="${loanId}" data-groupid="${d.groupId||''}" data-emiamt="${dueAmt||0}">
+    <td>${sl}</td>
+    <td><strong>${esc(d.customerName)}</strong></td>
+    <td>${esc(d.coApplicantName||'—')}</td>
+    <td class="mono">${esc(d.phone||'—')}</td>
+    <td>${esc(groupName)}</td>
+    <td>${esc(day||'—')}</td>
+    <td class="mono">₹${fmtAmt(d.outstanding)}</td>
+    <td class="mono">₹${fmtAmt(dueAmt)}${isLastEmi ? ' <span class="helper" style="display:inline;">(last)</span>' : ''}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" class="tick-input" checked onchange="tickChanged(this)">
+        <input type="number" class="put-amt-input mono" value="${dueAmt||0}" disabled
+          style="width:100px;padding:6px;border:1px solid var(--line);border-radius:6px;"
+          oninput="clampPutAmt(this); updateCollectionTotals();">
+      </div>
+    </td>
+  </tr>`;
+}
+function tickChanged(chk){
+  const inp = chk.closest('tr').querySelector('.put-amt-input');
+  const emiAmt = parseFloat(chk.closest('tr').dataset.emiamt) || 0;
+  if(chk.checked){
+    inp.value = emiAmt;
+    inp.disabled = true;
+  }else{
+    inp.disabled = false;
+  }
+  updateCollectionTotals();
+}
+function clampPutAmt(inp){
+  const emiAmt = parseFloat(inp.closest('tr').dataset.emiamt) || 0;
+  let v = parseFloat(inp.value);
+  if(isNaN(v) || v < 0) v = 0;
+  if(v > emiAmt) v = emiAmt;
+  inp.value = v;
+}
+
+async function loadCollectionCustomers(){
+  const groupId = document.getElementById('collGroupSelect').value;
+  const wrap = document.getElementById('collectionTableWrap');
+  if(!groupId){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = 'Borrower load ho rahe hain...';
+
+  const groupDoc = await db.collection('groups').doc(groupId).get();
+  const groupData = groupDoc.data();
+  const staging = await loadStagingDoc(CURRENT_USER.branchId, todayStr());
+
+  let loanSnap = await db.collection('loans')
+    .where('branchId','==', CURRENT_USER.branchId)
+    .where('groupId','==', groupId)
+    .where('status','==','active').get();
+
+  let eligibleDocs;
+  if(COLLECTION_TYPE === 'overdue'){
+    eligibleDocs = loanSnap.docs.filter(doc => doc.data().overdue && !doc.data().deceased);
+  }else{
+    // Realizable/Advance: disb date ke agle din se hi collection criteria me aata hai,
+    // overdue-flagged aur deceased customers yahan nahi dikhte.
+    const today = todayStr();
+    eligibleDocs = loanSnap.docs.filter(doc => {
+      const dd = doc.data();
+      return (dd.disbDate||'') < today && !dd.overdue && !dd.deceased;
+    });
+  }
+
+  if(eligibleDocs.length === 0){
+    wrap.innerHTML = `<div class="empty-row" style="padding:20px;color:var(--text-dim);">Is group me koi ${COLLECTION_TYPE==='overdue'?'overdue':'active'} borrower nahi hai.</div>`;
+    return;
+  }
+
+  let rows = '';
+  let sl = 1;
+  eligibleDocs.forEach(doc=>{
+    const d = doc.data();
+    const isLastEmi = (d.emisPaid||0) >= (d.tenureWeeks||1) - 1;
+    const dueAmt = isLastEmi ? (d.lastEmiAmt != null ? d.lastEmiAmt : d.emiAmt) : d.emiAmt;
+    rows += collectionRowHtml(sl++, groupData.name, groupData.collectionDay, d, doc.id, dueAmt, isLastEmi);
+  });
+  wrap.innerHTML = `
+    <table>
+      <thead><tr><th>Sl</th><th>Borrower</th><th>Co Applicant</th><th>PH No</th><th>Group</th><th>Day</th><th>Outstanding</th><th>Emi Amt</th><th>Tick / Put Amt</th></tr></thead>
+      <tbody id="collRowsBody">${rows}</tbody>
+    </table>
+    <div style="margin-top:14px;display:flex;gap:26px;font-size:13.5px;">
+      <div>${COLLECTION_TYPE === 'realizable' ? 'Realizable Amt' : COLLECTION_TYPE === 'advance' ? 'Advance Amt' : 'Overdue Amt'}: <strong id="collSumEmi" class="mono">₹0</strong></div>
+      <div>${COLLECTION_TYPE === 'realizable' ? 'Realised Amt' : 'Collected Amt'}: <strong id="collSumPut" class="mono">₹0</strong></div>
+    </div>
+    <button class="btn-sm gold" style="margin-top:14px;" onclick="submitCollection('${groupId}')">Save</button>
+  `;
+  // Restore already-saved Put Amt/tick state for this session (agar staff dobara is group par aaye)
+  document.querySelectorAll('#collRowsBody tr').forEach(tr=>{
+    const loanId = tr.dataset.loanid;
+    const e = staging.entries && staging.entries[loanId];
+    if(e && e.type === COLLECTION_TYPE){
+      const chk = tr.querySelector('.tick-input');
+      const inp = tr.querySelector('.put-amt-input');
+      const emiAmt = parseFloat(tr.dataset.emiamt) || 0;
+      inp.value = e.putAmt;
+      if(e.putAmt < emiAmt){ chk.checked = false; inp.disabled = false; }
+    }
+  });
+  updateCollectionTotals();
+}
+function updateCollectionTotals(){
+  let sumEmi = 0, sumPut = 0;
+  document.querySelectorAll('#collRowsBody tr').forEach(tr=>{
+    sumEmi += parseFloat(tr.dataset.emiamt) || 0;
+    const inp = tr.querySelector('.put-amt-input');
+    sumPut += parseFloat(inp.value) || 0;
+  });
+  document.getElementById('collSumEmi').textContent = '₹' + fmtAmt(sumEmi);
+  document.getElementById('collSumPut').textContent = '₹' + fmtAmt(sumPut);
+}
+// Save = sirf dailyStaging document me likhta hai (local SQL jaisa) — loan
+// outstanding tab tak nahi badalta jab tak Branch E.O.D submit nahi karta.
+async function submitCollection(groupId){
+  const rows = document.querySelectorAll('#collRowsBody tr');
+  const staged = [];
+  rows.forEach(tr=>{
+    const putAmt = parseFloat(tr.querySelector('.put-amt-input').value) || 0;
+    staged.push({
+      loanId: tr.dataset.loanid,
+      groupId: tr.dataset.groupid,
+      emiAmt: parseFloat(tr.dataset.emiamt) || 0,
+      putAmt,
+      customerName: tr.children[1].textContent.trim()
+    });
+  });
+  if(staged.length === 0){ toast('Is group me koi borrower nahi mila', true); return; }
+  try{
+    await saveStagingRows(CURRENT_USER.branchId, todayStr(), COLLECTION_TYPE, groupId, staged);
+    toast('Save ho gaya — E.O.D submit karne par ye final hoga');
+  }catch(e){ toast(e.message, true); }
+}
+</script>
+</body>
+</html>
